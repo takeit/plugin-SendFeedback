@@ -1,0 +1,4 @@
+newscoop_send_feedback:
+    resource: "@NewscoopSendFeedbackBundle/Controller/"
+    type: annotation
+    prefix: /

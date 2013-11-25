@@ -1,0 +1,13 @@
+Plugins: "Plugins"
+plugin:
+  feedback:
+    btn:
+      save: Save
+    titlecontent: "Send Feedback settings"
+    label:
+      menu: "Send Feedback"
+      attachment: "Allowed file formats: images (jpg, png, gif), documents (pdf)"
+      subject: "Subject"
+      message: "Message"
+    msg:
+      saved: "Successfully saved."
