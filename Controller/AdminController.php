@@ -24,7 +24,10 @@ class AdminController extends Controller
     public function indexAction(Request $request)
     {   
         $preferencesService = $this->container->get('system_preferences_service');
-        $form = $this->container->get('form.factory')->create(new SettingsType(), array(), array());
+        $form = $this->container->get('form.factory')->create(new SettingsType(), array(
+            'toEmail' => $preferencesService->SendFeedbackEmail,
+        ), array());
+        
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
