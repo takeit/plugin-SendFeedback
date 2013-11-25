@@ -13,15 +13,32 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Newscoop\SendFeedbackBundle\SettingsType;
 
 class AdminController extends Controller
 {
     /**
-    * @Route("/plugin/send-feedback")
+    * @Route("/admin/send-feedback")
     * @Template()
     */
     public function indexAction(Request $request)
     {   
-        
+        $preferencesService = $this->container->get('system_preferences_service');
+        $form = $this->container->get('form.factory')->create(new SettingsType(), array(), array());
+        if ($request->isMethod('POST')) {
+            $form->bind($request);
+            if ($form->isValid()) {
+                $preferencesService->SendFeedbackEmail = $data['toEmail'];
+                $this->get('session')->getFlashBag()->add('success', $translator->trans('plugin.feedback.msg.success'));
+
+                return $this->redirect($this->generateUrl('newscoop_sendfeedback_admin_index'));
+                
+            }
+            
+            $this->get('session')->getFlashBag()->add('error', $translator->trans('plugin.feedback.msg.error'));
+
+            return $this->redirect($this->generateUrl('newscoop_sendfeedback_admin_index'));
+            
+        }
     }
 }

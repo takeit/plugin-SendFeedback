@@ -9,5 +9,8 @@ plugin:
       attachment: "Allowed file formats: images (jpg, png, gif), documents (pdf)"
       subject: "Subject"
       message: "Message"
+      toemailsmall: "E-mail address"
+      toemail: "E-mail address to which feedback messages will come."
     msg:
-      saved: "Successfully saved."
+      success: "Successfully saved."
+      error: "Could not save your email"

@@ -1,39 +1,18 @@
 {% extends 'NewscoopNewscoopBundle::admin_layout.html.twig' %}
 
-{% block admin_title %}{{ 'plugin.recommendation.label.menu'|trans }}{% endblock %}
-{% block admin_page_title_content %}{{ 'plugin.recommendation.titlecontent'|trans }}{% endblock %}
+{% block admin_title %}{{ 'plugin.feedback.label.menu'|trans }}{% endblock %}
+{% block admin_page_title_content %}{{ 'plugin.feedback.titlecontent'|trans }}{% endblock %}
 
 {% block admin_stylesheets %}
 <style>
-#article-recommend-settingsTable {float: left; margin-top: 0px; margin-right: 25px;}
-.article-recommend-message {background: none;margin: 2px; width: 840px; height: 254px;border: 1px solid #C0C0C0;}
-.article-recommend-bg {background-color: #ECECEC;}
-.article-recommend-border {border-right: 1px solid #9d9d9d;}
-.article-recommend-size {width: 250px;}
+#send-feedback-settingsTable {float: left; margin-top: 0px; margin-right: 25px;}
+.send-feedback-bg {background-color: #ECECEC;}
+.send-feedback-border {border-right: 1px solid #9d9d9d;}
+.send-feedback-size {width: 250px;}
 .alert {color: #C00; padding: 0; margin: 0;}
 </style>
 {% endblock %}
-{% block admin_scripts %}
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#save').live('click', function(e){
-        $.ajax({
-            type: "POST",
-            url: "{{ path('newscoop_articlerecommendation_admin_savemessage') }}",
-            data: {'message': $('.article-recommend-message').val()},
-            dataType: "json",
-            success: function(msg){
-                if (msg.status) {
-                    flashMessage('{{ 'plugin.recommendation.msg.saved'|trans }}');
-                } else {
-                    flashMessage('{{ 'plugin.recommendation.msg.error'|trans }}', 'error');
-                }
-            }
-        });
-    });
-});
-</script>
-{% endblock %}
+{% block admin_scripts %}{% endblock %}
 
 {% block admin_content %}
 {% for flashMessage in app.session.flashbag.get('error') %}
@@ -48,35 +27,21 @@ $(document).ready(function() {
         {{ flashMessage }}
     </div>
 {% endfor %}
-<form action="{{ path('newscoop_articlerecommendation_admin_index') }}" method="post" {{ form_enctype(form) }} >
-    <table id="article-recommend-settingsTable" border="0" cellspacing="0" cellpadding="0" class="box_table">
+<form action="{{ path('newscoop_sendfeedback_admin_index') }}" method="post" {{ form_enctype(form) }} >
+    <table id="send-feedback-settingsTable" border="0" cellspacing="0" cellpadding="0" class="box_table">
         <tbody>
             <tr>
-                <td class="article-recommend-border"></td>
+                <td class="send-feedback-border"></td>
             </tr>
-            <tr class="article-recommend-bg">
-                <td align="left" class="article-recommend-size article-recommend-border">   
-                    {{ form_label(form.captcha) }} <br>
-                    <small>{{ 'plugin.recommendation.label.captchasmall'|trans }}</small>
+            <tr class="send-feedback-bg">
+                <td align="left" class="send-feedback-size send-feedback-border">   
+                    {{ form_label(form.toEmail) }} <br>
+                    <small>{{ 'plugin.feedback.label.toemailsmall'|trans }}</small>
                 </td>
             </tr>
             <tr>
-                <td class="article-recommend-border">
-                    {{ form_widget(form.captcha, {'attr' : {'class' : 'input_check'}}) }}
-                </td>
-            </tr>
-            <tr>
-                <td class="article-recommend-border"></td>
-            </tr>
-            <tr class="article-recommend-bg">
-                <td align="left" class="article-recommend-size article-recommend-border">
-                    {{ form_label(form.forLoggedIn) }} <br>
-                    <small>{{ 'plugin.recommendation.label.forloggedsmall'|trans }}</small> 
-                </td>
-            </tr>
-            <tr>
-                <td class="article-recommend-border">
-                    {{ form_widget(form.forLoggedIn, {'attr' : {'class' : 'input_check'}}) }}
+                <td class="send-feedback-border">
+                    {{ form_widget(form.toEmail, {'attr' : {'class' : 'input_select'}}) }}
                 </td>
             </tr>
             <tr>
@@ -84,28 +49,11 @@ $(document).ready(function() {
             </tr>
             <tr>
                 <td colspan="2" align="right" style="padding-top: 10px;">
-                    <button type="submit" class="btn btn-primary">{{ 'plugin.recommendation.btn.save'|trans }}</button>
+                    <button type="submit" class="btn btn-primary">{{ 'plugin.feedback.btn.save'|trans }}</button>
                 </td>
             </tr>
             {{ form_rest(form) }}
         </tbody>
     </table>
 </form>
-<table border="0" cellspacing="0" cellpadding="0" class="box_table">
-    <tbody>
-        <tr>
-            <td class="article-recommend-border">
-                <div class="actions">
-                    <strong>{{ 'plugin.recommendation.label.message'|trans }}</strong>
-                </div>
-                <textarea id="textarea" class="article-recommend-message" name="textarea">{{ message }}</textarea>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="right" style="padding-top: 10px;">
-                <button type="submit" id="save" class="btn btn-primary">{{ 'plugin.recommendation.btn.save'|trans }}</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
 {% endblock %}
