@@ -10,16 +10,20 @@ namespace Newscoop\SendFeedbackBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Newscoop\EventDispatcher\Events\GenericEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Event lifecycle management
  */
 class LifecycleSubscriber implements EventSubscriberInterface
 {
+    private $container;
+
     private $em;
 
-    public function __construct($em) {
-        $this->em = $em;
+    public function __construct(ContainerInterface $container) {
+        $this->container = $container;
+        $this->em = $this->container->get('em');
     }
 
     public function install(GenericEvent $event)
@@ -29,6 +33,9 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         // Generate proxies for entities
         $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
+
+        $preferencesService = $this->container->get('system_preferences_service');
+        $preferencesService->set('SendFeedbackEmail', 'email@example.com');
     }
 
     public function update(GenericEvent $event)
@@ -44,6 +51,13 @@ class LifecycleSubscriber implements EventSubscriberInterface
     {   
         $tool = new \Doctrine\ORM\Tools\SchemaTool($this->em);
         $tool->dropSchema($this->getClasses(), true);
+
+        $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+            'option' => 'SendFeedbackEmail'
+        ));
+
+        $this->em->remove($removeEmail);
+        $this->em->flush();
     }
 
     public static function getSubscribedEvents()

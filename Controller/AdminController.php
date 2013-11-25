@@ -28,7 +28,7 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
-                $preferencesService->SendFeedbackEmail = $data['toEmail'];
+                $preferencesService->set('SendFeedbackEmail', $data['toEmail']);
                 $this->get('session')->getFlashBag()->add('success', $translator->trans('plugin.feedback.msg.success'));
 
                 return $this->redirect($this->generateUrl('newscoop_sendfeedback_admin_index'));

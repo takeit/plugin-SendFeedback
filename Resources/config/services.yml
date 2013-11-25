@@ -1,8 +1,7 @@
 services:
     newscoop_send_feedback.lifecyclesubscriber:
         class: Newscoop\SendFeedbackBundle\EventListener\LifecycleSubscriber
-        arguments:
-            - @em
+        arguments:  ["@service_container"]
         tags:
             - { name: kernel.event_subscriber}
 
