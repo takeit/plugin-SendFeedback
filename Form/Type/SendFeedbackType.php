@@ -15,13 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class SendFeedbackType extends AbstractType
 {   
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {   
         $builder->add('subject', null, array(

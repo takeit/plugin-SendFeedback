@@ -6,11 +6,16 @@ plugin:
     titlecontent: "Send Feedback settings"
     label:
       menu: "Send Feedback"
-      attachment: "Allowed file formats: images (jpg, png, gif), documents (pdf)"
+      attachment: "Allowed file formats: images (jpg, jpeg, png, gif), documents (pdf)"
       subject: "Subject"
       message: "Message"
       toemailsmall: "E-mail address"
       toemail: "E-mail address to which feedback messages will be sent."
     msg:
-      success: "Successfully saved."
-      error: "Could not save your email"
+      success: "Successfully sent."
+      error: "You have to be logged in to send Feedback."
+      errorfile: "Wrong file extension!"
+      errorsize: "File size of uploaded file is to big! Max file size is %size%"
+    email:
+      subject: "Feedback: %subject%"
+      message: "\n\nFrom: %userLink% \n\n Send by: %siteLink%"
