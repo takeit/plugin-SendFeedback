@@ -10,7 +10,7 @@ plugin:
       subject: "Subject"
       message: "Message"
       toemailsmall: "E-mail address"
-      toemail: "E-mail address to which feedback messages will come."
+      toemail: "E-mail address to which feedback messages will be sent."
     msg:
       success: "Successfully saved."
       error: "Could not save your email"
