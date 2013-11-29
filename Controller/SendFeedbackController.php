@@ -39,7 +39,7 @@ class SendFeedbackController extends Controller
                 $cacheDir = __DIR__ . '/../../../../cache';
                 $date = new \DateTime("now");
                 $fileDir = $cacheDir . '/' . $date->format('Y-m-d-H-i-s') . $attachment->getClientOriginalName();
-                if ($user && $user->) {
+                if ($user) {
                     if ($attachment && $attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
                         switch ($attachment->guessClientExtension()) {
                             case 'png':
