@@ -20,7 +20,6 @@ class SendFeedbackController extends Controller
 {
     /**
     * @Route("/plugin/send-feedback")
-    * @Template()
     */
     public function indexAction(Request $request)
     {   
@@ -36,13 +35,13 @@ class SendFeedbackController extends Controller
                 $data = $form->getData();
                 $user = $this->container->get('user')->getCurrentUser();
                 $toEmail = $preferencesService->SendFeedbackEmail;
-                $attachment = $form['attachment'];
+                $attachment = $form['attachment']->getData();
                 $cacheDir = __DIR__ . '/../../../../cache';
                 $date = new \DateTime("now");
-                $fileDir = $cacheDir . '/' . $date->format('Y-m-d-H:i:s') . $attachment->getData()->getClientOriginalName();
-                if ($user) {
-                    if ($attachment && $attachment->getData()->getClientSize() <= $attachment->getData()->getMaxFilesize() && $attachment->getData()->getClientSize() != 0) {
-                        switch ($attachment->getData()->guessClientExtension()) {
+                $fileDir = $cacheDir . '/' . $date->format('Y-m-d-H-i-s') . $attachment->getClientOriginalName();
+                if ($user && $user->) {
+                    if ($attachment && $attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
+                        switch ($attachment->guessClientExtension()) {
                             case 'png':
                                 $this->storeInCache($attachment, $cacheDir, $fileDir);
                                 break;
@@ -60,25 +59,18 @@ class SendFeedbackController extends Controller
                                 break;
                             
                             default:
-                                $this->get('session')->getFlashBag()->add('error', $translator->trans('plugin.feedback.msg.errorfile'));
-
-                                return $this->redirect($this->generateUrl('newscoop_sendfeedback_sendfeedback_index'));
+                                return new Response(json_encode(array('errorFile' => true)));
                         }
 
                         $isAttached = true;
                         $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached, $fileDir);
-                        $this->get('session')->getFlashBag()->add('success', $translator->trans('plugin.feedback.msg.saved'));
 
-                        return $this->redirect($this->generateUrl('newscoop_sendfeedback_sendfeedback_index'));
+                        return new Response(json_encode(array('status' => true)));
                     }
 
-                    $this->get('session')->getFlashBag()->add('error', $translator->trans('plugin.feedback.msg.errorsize', array('%size%' => $attachment->getData()->getMaxFilesize())));
-
-                    return $this->redirect($this->generateUrl('newscoop_sendfeedback_sendfeedback_index'));
+                    return new Response(json_encode(array('errorSize' => true)));
                 } else {
-                    $this->get('session')->getFlashBag()->add('error', $translator->trans('plugin.feedback.msg.error'));
-
-                    return $this->redirect($this->generateUrl('newscoop_sendfeedback_sendfeedback_index'));
+                    return new Response(json_encode(array('status' => false)));
                 }
             } 
         }
@@ -107,7 +99,7 @@ class SendFeedbackController extends Controller
         $link = $request->getScheme() . '://' . $request->getHttpHost();
         $message = \Swift_Message::newInstance()
             ->setSubject($translator->trans('plugin.feedback.email.subject', array('%subject%' => $subject)))
-            ->setFrom('rmuszynski1@gamail.com')//$user->getEmail())
+            ->setFrom($user->getEmail())
             ->setTo($to)
             ->setBody(
                 $this->renderView(
@@ -115,7 +107,7 @@ class SendFeedbackController extends Controller
                     array(
                         'userMessage' => $userMessage,
                         'message' => $translator->trans('plugin.feedback.email.message', array(
-                            '%userLink%' => $link . '/user/profile/amerigo',//$link . '/user/profile/'.$user->getUsername(),
+                            '%userLink%' => $link . '/user/profile/'.$user->getUsername(),
                             '%siteLink%' => $link,
                         ))
                     )
@@ -146,7 +138,7 @@ class SendFeedbackController extends Controller
     public function storeInCache($attachment, $cacheDir, $fileDir) 
     {
         try {
-            $attachment->getData()->move($cacheDir, $fileDir);
+            $attachment->move($cacheDir, $fileDir);
         } catch (\Exception $e) {
             throw new \Exception("Fatal error occurred!", 1);
         }
