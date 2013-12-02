@@ -42,6 +42,6 @@ class SendFeedbackType extends AbstractType
 
     public function getName()
     {
-        return 'omniboxFeedback';
+        return 'sendFeedbackForm';
     }
 }

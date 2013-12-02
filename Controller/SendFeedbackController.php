@@ -38,46 +38,54 @@ class SendFeedbackController extends Controller
                 $attachment = $form['attachment']->getData();
                 $cacheDir = __DIR__ . '/../../../../cache';
                 $date = new \DateTime("now");
-                $fileDir = $cacheDir . '/' . $date->format('Y-m-d-H-i-s') . $attachment->getClientOriginalName();
+                if (is_null($data['subject']) || is_null($data['message'])) {
+                    return new Response(json_encode(array('status' => false)));
+                }
+
                 if ($user) {
-                    if ($attachment && $attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
-                        switch ($attachment->guessClientExtension()) {
-                            case 'png':
-                                $this->storeInCache($attachment, $cacheDir, $fileDir);
-                                break;
-                            case 'jpg':
-                                $this->storeInCache($attachment, $cacheDir, $fileDir);
-                                break;
-                            case 'jpeg':
-                                $this->storeInCache($attachment, $cacheDir, $fileDir);
-                                break;
-                            case 'gif':
-                                $this->storeInCache($attachment, $cacheDir, $fileDir);
-                                break;
-                            case 'pdf':
-                                $this->storeInCache($attachment, $cacheDir, $fileDir);
-                                break;
-                            
-                            default:
-                                return new Response(json_encode(array('errorFile' => true)));
+                    if ($attachment) {
+                        if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
+                            $fileDir = $cacheDir . '/' . $date->format('Y-m-d-H-i-s') . $attachment->getClientOriginalName();
+                            switch ($attachment->guessClientExtension()) {
+                                case 'png':
+                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    break;
+                                case 'jpg':
+                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    break;
+                                case 'jpeg':
+                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    break;
+                                case 'gif':
+                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    break;
+                                case 'pdf':
+                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    break;
+                                
+                                default:
+                                    return new Response(json_encode(array('errorFile' => true)));
+                            }
+
+                            $isAttached = true;
+                            $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached, $fileDir);
+
+                            return new Response(json_encode(array('status' => true)));
+                        } else {
+                            return new Response(json_encode(array('errorSize' => true)));
                         }
-
-                        $isAttached = true;
-                        $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached, $fileDir);
-
-                        return new Response(json_encode(array('status' => true)));
                     }
 
-                    return new Response(json_encode(array('errorSize' => true)));
+                    $isAttached = false;
+                    $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached);
+
+                    return new Response(json_encode(array('status' => true)));
+
                 } else {
                     return new Response(json_encode(array('status' => false)));
                 }
-            } 
+            }
         }
-
-        return array(
-            'form' => $form->createView()
-        );
     }
 
     /**
@@ -106,8 +114,10 @@ class SendFeedbackController extends Controller
                     'NewscoopSendFeedbackBundle::email.txt.twig',
                     array(
                         'userMessage' => $userMessage,
-                        'message' => $translator->trans('plugin.feedback.email.message', array(
-                            '%userLink%' => $link . '/user/profile/'.$user->getUsername(),
+                        'from' => $translator->trans('plugin.feedback.email.from', array(
+                            '%userLink%' => $link . '/user/profile/'.$user->getUsername()
+                        )),
+                        'send' => $translator->trans('plugin.feedback.email.send', array(
                             '%siteLink%' => $link,
                         ))
                     )
