@@ -1,4 +1,6 @@
-{{ userMessage }}
+{% autoescape 'html' %}
+{{ userMessage }} <br><br>
 
-{{ from }}
+{{ from }} <br>
 {{ send }}
+{% endautoescape %}

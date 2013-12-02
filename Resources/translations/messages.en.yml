@@ -21,4 +21,4 @@ plugin:
     email:
       subject: "Feedback: %subject%"
       from: "From: %userLink%"
-      send: "Send by: %siteLink%"
+      send: "Sent by: %siteLink%"
