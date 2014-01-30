@@ -62,27 +62,47 @@ class SendFeedbackController extends Controller
                                 case 'pdf':
                                     $this->storeInCache($attachment, $cacheDir, $fileDir);
                                     break;
-                                
+
                                 default:
-                                    return new Response(json_encode(array('errorFile' => true)));
+                                    return new Response(json_encode(array(
+                                        'status' => false,
+                                        'errorFile' => true,
+                                        'errorSize' => false
+                                    )));
                             }
 
                             $isAttached = true;
                             $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached, $fileDir);
 
-                            return new Response(json_encode(array('status' => true)));
+                            return new Response(json_encode(array(
+                                'status' => true,
+                                'errorFile' => false,
+                                'errorSize' => false
+                                )));
                         } else {
-                            return new Response(json_encode(array('errorSize' => true)));
+                            return new Response(json_encode(array(
+                                'status' => false,
+                                'errorSize' => true,
+                                'errorFile' => false,
+                            )));
                         }
                     }
 
                     $isAttached = false;
                     $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached);
 
-                    return new Response(json_encode(array('status' => true)));
+                    return new Response(json_encode(array(
+                        'status' => true,
+                        'errorSize' => false,
+                        'errorFile' => false,
+                    )));
 
                 } else {
-                    return new Response(json_encode(array('status' => false)));
+                    return new Response(json_encode(array(
+                        'status' => false,
+                        'errorSize' => false,
+                        'errorFile' => false,
+                    )));
                 }
             }
         }
