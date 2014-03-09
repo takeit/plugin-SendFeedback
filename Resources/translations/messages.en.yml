@@ -14,10 +14,14 @@ plugin:
     msg:
       saved: "Successfully saved"
       error: "Error occurred while saving changes."
-      success: "Successfully sent."
-      error: "You have to be logged in to send Feedback."
+      success: "Your message has been sent."
+      errorlogged: "You have to be logged in to send Feedback."
       errorfile: "Wrong file extension!"
-      errorsize: "File size of uploaded file is to big! Max file size is %size%"
+      errorsize: "Size of uploaded file is to big! Max file size is %size%"
+      successimage: "Image is uploaded and your message is sent."
+      successfile: "File is uploaded and your message is sent."
+      banned: "You have been banned from writing feedbacks."
+      notfilled: "Feedback content was not filled in."
     email:
       subject: "Feedback: %subject%"
       from: "From: %userLink%"

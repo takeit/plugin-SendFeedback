@@ -13,8 +13,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\SendFeedbackBundle\Form\Type\SendFeedbackType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Newscoop\Entity\Feedback;
+use Newscoop\EventDispatcher\Events\GenericEvent;
 
 class SendFeedbackController extends Controller
 {
@@ -22,11 +25,15 @@ class SendFeedbackController extends Controller
     * @Route("/plugin/send-feedback")
     */
     public function indexAction(Request $request)
-    {   
-        $preferencesService = $this->container->get('system_preferences_service');
+    {
         $translator = $this->container->get('translator');
-        $isAttached = false;
-        $fileName = null;
+        $em = $this->container->get('em');
+        $attachmentService = $this->container->get('attachment');
+        $preferencesService = $this->container->get('system_preferences_service');
+        $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
+        $to = $preferencesService->SendFeedbackEmail;
+        $response = array();
+        $parameters = $request->request->all();
         $form = $this->container->get('form.factory')->create(new SendFeedbackType(), array(), array());
 
         if ($request->isMethod('POST')) {
@@ -34,76 +41,94 @@ class SendFeedbackController extends Controller
             if ($form->isValid()) {
                 $data = $form->getData();
                 $user = $this->container->get('user')->getCurrentUser();
-                $toEmail = $preferencesService->SendFeedbackEmail;
                 $attachment = $form['attachment']->getData();
-                $cacheDir = __DIR__ . '/../../../../cache';
                 $date = new \DateTime("now");
                 if (is_null($data['subject']) || is_null($data['message'])) {
-                    return new Response(json_encode(array('status' => false)));
+                    $response['response'] = array(
+                        'status' => false,
+                        'message' => $translator->trans('plugin.feedback.msg.notfilled')
+                    );
+
+                    return new JsonResponse($response);
                 }
 
                 if ($user) {
+                    $acceptanceRepository = $em->getRepository('Newscoop\Entity\Comment\Acceptance');
+
+                    if ($acceptanceRepository->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication'])) {
+                        $response['response'] = $translator->trans('plugin.feedback.msg.banned');
+                    }
+                } else {
+                    $response['response'] = array(
+                        'status' => false,
+                        'message' => $translator->trans('plugin.feedback.msg.errorlogged')
+                    );
+                }
+
+                if (empty($response['response'])) {
+                    $feedback = new Feedback();
+
+                    $values = array(
+                        'user' => $user,
+                        'publication' => $parameters['publication'],
+                        'section' => $parameters['section'],
+                        'article' => $parameters['article'],
+                        'subject' => $data['subject'],
+                        'message' => $data['message'],
+                        'url' => $parameters['feedbackUrl'],
+                        'time_created' => new \DateTime(),
+                        'language' => $parameters['language'],
+                        'status' => 'pending',
+                        'attachment_type' => 'none',
+                        'attachment_id' => 0
+                    );
+
                     if ($attachment) {
                         if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
-                            $fileDir = $cacheDir . '/' . $date->format('Y-m-d-H-i-s') . $attachment->getClientOriginalName();
                             switch ($attachment->guessClientExtension()) {
                                 case 'png':
-                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
                                     break;
                                 case 'jpg':
-                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
                                     break;
                                 case 'jpeg':
-                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
                                     break;
                                 case 'gif':
-                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
                                     break;
                                 case 'pdf':
-                                    $this->storeInCache($attachment, $cacheDir, $fileDir);
+                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
                                     break;
 
                                 default:
-                                    return new Response(json_encode(array(
+                                    $response['response'] = array(
                                         'status' => false,
-                                        'errorFile' => true,
-                                        'errorSize' => false
-                                    )));
+                                        'message' => $translator->trans('plugin.feedback.msg.errorfile')
+                                    );
+
+                                    return new JsonResponse($response);
                             }
-
-                            $isAttached = true;
-                            $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached, $fileDir);
-
-                            return new Response(json_encode(array(
-                                'status' => true,
-                                'errorFile' => false,
-                                'errorSize' => false
-                                )));
                         } else {
-                            return new Response(json_encode(array(
+                            $response['response'] = array(
                                 'status' => false,
-                                'errorSize' => true,
-                                'errorFile' => false,
-                            )));
+                                'message' => $translator->trans('plugin.feedback.msg.errorsize', array('%size%' => $preferencesService->MaxUploadFileSize))
+                            );
                         }
+                    } else {
+                        $feedbackRepository->save($feedback, $values);
+                        $feedbackRepository->flush();
+                        $this->sendMail($values, $user, $to, $attachment);
+
+                        $response['response'] = array(
+                            'status' => true,
+                            'message' => $translator->trans('plugin.feedback.msg.success')
+                        );
                     }
-
-                    $isAttached = false;
-                    $this->sendMail($request, $data['subject'], $user, $toEmail, $data['message'], $isAttached);
-
-                    return new Response(json_encode(array(
-                        'status' => true,
-                        'errorSize' => false,
-                        'errorFile' => false,
-                    )));
-
-                } else {
-                    return new Response(json_encode(array(
-                        'status' => false,
-                        'errorSize' => false,
-                        'errorFile' => false,
-                    )));
                 }
+
+                return new JsonResponse($response);
             }
         }
     }
@@ -111,66 +136,102 @@ class SendFeedbackController extends Controller
     /**
      * Send e-mail message with feedback
      *
-     * @param Request              $request     Request
-     * @param string               $subject     Feedback subject
-     * @param Newscoop\Entity\User $user        User
-     * @param string               $to          Email that messages will be sent
-     * @param string               $userMessage User feedback
-     * @param string               $isAttached  Is file attached
-     * @param UploadedFile|null    $attachment  Uplaoded file dir
+     * @param array                $values Values
+     * @param Newscoop\Entity\User $user   User
+     * @param string               $to     Email that messages will be sent
+     * @param UploadedFile|null    $file   Uploaded file dir
      *
      * @return void
      */
-    public function sendMail($request, $subject, $user, $to, $userMessage, $isAttached, $file = null)
-    {   
+    private function sendMail($values, $user, $to, $file = null)
+    {
         $translator = $this->container->get('translator');
+        $emailService = $this->container->get('email');
+        $attachmentService = $this->container->get('attachment');
+        $imageService = $this->container->get('image');
+        $zendRouter = $this->container->get('zend_router');
+        $request = $this->container->get('request');
         $link = $request->getScheme() . '://' . $request->getHttpHost();
-        $message = \Swift_Message::newInstance()
-            ->setSubject($translator->trans('plugin.feedback.email.subject', array('%subject%' => $subject)))
-            ->setFrom($user->getEmail())
-            ->setTo($to)
-            ->setBody(
-                $this->renderView(
-                    'NewscoopSendFeedbackBundle::email.txt.twig',
-                    array(
-                        'userMessage' => $userMessage,
-                        'from' => $translator->trans('plugin.feedback.email.from', array(
-                            '%userLink%' => $link . '/user/profile/'.$user->getUsername()
-                        )),
-                        'send' => $translator->trans('plugin.feedback.email.send', array(
-                            '%siteLink%' => $link,
-                        ))
-                    )
-                )
+
+        $message = $this->renderView(
+            'NewscoopSendFeedbackBundle::email.txt.twig',
+            array(
+                'userMessage' => $values['message'],
+                'from' => $translator->trans('plugin.feedback.email.from', array(
+                    '%userLink%' => $link . $zendRouter->assemble(array('controller' => 'user', 'action' => 'profile', 'module' => 'default')) ."/". urlencode($user->getUsername())
+                )),
+                'send' => $translator->trans('plugin.feedback.email.send', array(
+                    '%siteLink%' => $values['url'],
+                ))
             )
-            ->setContentType("text/html");
+        );
 
-        if($isAttached){
-            $message->attach(\Swift_Attachment::fromPath($file));
+        $subject = $translator->trans('plugin.feedback.email.subject', array('%subject%' => $values['subject']));
+        $attachmentDir = '';
+        if ($file instanceof \Newscoop\Image\LocalImage) {
+            $attachmentDir = $imageService->getImagePath().$file->getBasename();
         }
 
-        $this->container->get('mailer')->send($message);
-
-        if (file_exists($file)) {
-            unlink($file);
+        if ($file instanceof \Newscoop\Entity\Attachment) {
+            $attachmentDir = $attachmentService->getStorageLocation($file);
         }
+
+        $emailService->send($subject, $message, $to, $user->getEmail(), $attachmentDir);
     }
 
-    /**
-     * Stores uploaded file in cache
-     *
-     * @param UploadedFile $attachment Uplaoded file
-     * @param string       $cacheDir   Cache dir
-     * @param string       $fileDir    Uploaded file dir
-     *
-     * @return void|Exception
-     */
-    public function storeInCache($attachment, $cacheDir, $fileDir) 
+    private function processAttachment($attachment, $user, $values)
     {
-        try {
-            $attachment->move($cacheDir, $fileDir);
-        } catch (\Exception $e) {
-            throw new \Exception("Fatal error occurred!", 1);
+        $imageService = $this->container->get('image');
+        $attachmentService = $this->container->get('attachment');
+        $em = $this->container->get('em');
+        $translator = $this->container->get('translator');
+        $preferencesService = $this->container->get('system_preferences_service');
+        $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
+        $language = $em->getRepository('Newscoop\Entity\Language')->findOneById($values['language']);
+        $toEmail = $preferencesService->SendFeedbackEmail;
+        $feedback = new Feedback();
+        $source = array(
+            'user' => $user,
+            'source' => 'feedback'
+        );
+
+        if (strstr($attachment->getClientMimeType(), 'image')) {
+            $image = $imageService->upload($attachment, $source);
+            $values['attachment_type'] = 'image';
+            $values['attachment_id'] = $image->getId();
+            $feedbackRepository->save($feedback, $values);
+            $feedbackRepository->flush();
+
+            $this->sendMail($values, $user, $toEmail, $image);
+
+            $this->get('dispatcher')
+                ->dispatch('image.delivered', new GenericEvent($this, array(
+                    'user' => $user,
+                    'image_id' => $image->getId()
+                )));
+
+            return array(
+                'status' => true,
+                'message' => $translator->trans('plugin.feedback.msg.successimage')
+            );
         }
+
+        $file = $attachmentService->upload($attachment, '', $language, $source);
+        $values['attachment_type'] = 'document';
+        $values['attachment_id'] = $file->getId();
+        $feedbackRepository->save($feedback, $values);
+        $feedbackRepository->flush();
+        $this->sendMail($values, $user, $toEmail, $file);
+
+        $this->get('dispatcher')
+            ->dispatch('document.delivered', new GenericEvent($this, array(
+                'user' => $user,
+                'document_id' => $file->getId()
+            )));
+
+        return array(
+            'status' => true,
+            'message' => $translator->trans('plugin.feedback.msg.successfile')
+        );
     }
 }
