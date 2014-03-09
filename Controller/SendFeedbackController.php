@@ -12,13 +12,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\SendFeedbackBundle\Form\Type\SendFeedbackType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Newscoop\Entity\Feedback;
 use Newscoop\EventDispatcher\Events\GenericEvent;
 
+/**
+ * Send feedback controller
+ */
 class SendFeedbackController extends Controller
 {
     /**
@@ -179,6 +181,15 @@ class SendFeedbackController extends Controller
         $emailService->send($subject, $message, $to, $user->getEmail(), $attachmentDir);
     }
 
+    /**
+     * Process attachment
+     *
+     * @param UploadedFile         $attachment Uploaded file
+     * @param Newscoop\Entity\User $user       User
+     * @param array                $values     Values
+     *
+     * @return array
+     */
     private function processAttachment($attachment, $user, $values)
     {
         $imageService = $this->container->get('image');
