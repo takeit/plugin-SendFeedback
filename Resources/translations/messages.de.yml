@@ -1,0 +1,28 @@
+Plugins: Plugins
+plugin:
+  feedback:
+    btn:
+      save: Speichern
+    email:
+      from: 'Von: %userLink%'
+      send: '%siteLink%: Gesendet von'
+      subject: 'Feedback: %subject%'
+    label:
+      attachment: 'Erlaubte Dateiformate: Bilder (jpg, jpeg, png, gif), Dokumente (pdf)'
+      menu: Sende Feedback
+      message: Nachricht
+      subject: Thema
+      toemail: "E-Mail-Adresse, an die Rückmeldungen gesendet werden soll."
+      toemailsmall: E-Mail-Adresse
+    msg:
+      banned: 'Sie wurden für die Feedback-Funktion gesperrt und können kein Feedback mehr senden. '
+      error: Fehler beim Speichern der Änderungen.
+      errorfile: Falsche Dateierweiterung!
+      errorlogged: "Sie müssen angemeldet sein, um Feedback zu senden."
+      errorsize: Größe der hochgeladenen Datei ist zu groß! Max. Dateigröße ist %size%
+      notfilled: Feedbackformular wurde nicht ausgefüllt
+      saved: Erfolgreich gespeichert
+      success: Ihre Nachricht wurde gesendet.
+      successfile: Datei wird hochgeladen und Ihre Nachricht wird gesendet.
+      successimage: Das Bild wird hochgeladen und Ihre Nachricht wird gesendet.
+    titlecontent: Feedback-Formular-Einstellungen
