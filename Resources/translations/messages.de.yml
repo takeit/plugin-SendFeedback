@@ -5,7 +5,7 @@ plugin:
       save: Speichern
     email:
       from: 'Von: %userLink%'
-      send: '%siteLink%: Gesendet von'
+      send: 'Gesendet von: %siteLink%'
       subject: 'Feedback: %subject%'
     label:
       attachment: 'Erlaubte Dateiformate: Bilder (jpg, jpeg, png, gif), Dokumente (pdf)'
