@@ -1,0 +1,28 @@
+Plugins: Wtyczki
+plugin:
+    feedback:
+        btn:
+            save: Zapisz
+        titlecontent: null
+        label:
+            menu: null
+            attachment: null
+            subject: Temat
+            message: Wiadomość
+            toemailsmall: null
+            toemail: null
+        msg:
+            saved: null
+            error: null
+            success: null
+            errorlogged: null
+            errorfile: null
+            errorsize: null
+            successimage: null
+            successfile: null
+            banned: null
+            notfilled: null
+        email:
+            subject: null
+            from: null
+            send: null

@@ -1,0 +1,28 @@
+Plugins: Plugins
+plugin:
+    feedback:
+        btn:
+            save: Save
+        titlecontent: 'Send Feedback settings'
+        label:
+            menu: 'Send Feedback'
+            attachment: 'Allowed file formats: images (jpg, jpeg, png, gif), documents (pdf)'
+            subject: Subject
+            message: Message
+            toemailsmall: 'E-mail address'
+            toemail: 'E-mail address to which feedback messages will be sent.'
+        msg:
+            saved: 'Successfully saved'
+            error: 'Error occurred while saving changes.'
+            success: 'Your message has been sent.'
+            errorlogged: 'You have to be logged in to send feedback messages.'
+            errorfile: 'Wrong file extension!'
+            errorsize: 'Size of uploaded file is too big! Max file size is %size%'
+            successimage: 'Image was uploaded and your message was sent.'
+            successfile: 'File was uploaded and your message was sent.'
+            banned: 'You have been banned from writing feedback messages!'
+            notfilled: 'Feedback content was not filled in.'
+        email:
+            subject: 'Feedback: %subject%'
+            from: 'From: %userLink%'
+            send: 'Sent by: %siteLink%'
