@@ -1,15 +1,15 @@
-Plugins: null
+Plugins: Plug-iny
 plugin:
     feedback:
         btn:
-            save: null
-        titlecontent: null
+            save: Uložit
+        titlecontent: 'Poslat Feedback nastavení'
         label:
-            menu: null
-            attachment: null
-            subject: null
-            message: null
-            toemailsmall: null
+            menu: 'Zaslat Feedback'
+            attachment: 'Povolené formáty souborů: obrázky (jpg, jpeg, png, gif), documentů (pdf)'
+            subject: Předmět
+            message: Zpráva
+            toemailsmall: 'E-mailová adresa'
             toemail: null
         msg:
             saved: null
