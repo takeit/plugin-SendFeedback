@@ -10,19 +10,19 @@ plugin:
             subject: Předmět
             message: Zpráva
             toemailsmall: 'E-mailová adresa'
-            toemail: null
+            toemail: 'E-mailová adresa na kterou budou zaslány Feedback zprávy.'
         msg:
-            saved: null
-            error: null
-            success: null
-            errorlogged: null
-            errorfile: null
-            errorsize: null
-            successimage: null
-            successfile: null
-            banned: null
-            notfilled: null
+            saved: 'Úspěšně uloženo'
+            error: 'Během ukládání změn se vyskytla chyba.'
+            success: 'Vaše zpráva byla poslána.'
+            errorlogged: 'Musíte být zalogováni, aby jste mohli poslat Feedback.'
+            errorfile: 'Špatná přípona souboru!'
+            errorsize: 'Velikost nahraného souboru je příliš velká! Maximální velikost souboru je %velikost%'
+            successimage: 'Obrázek byl nahrán a vaše zpráva byla odeslána. '
+            successfile: 'Soubor je vložen a vaše zpráva byla odeslána.'
+            banned: 'Bylo vám zakázano psát Feedbacky.'
+            notfilled: 'Obsah Feedbacku nebyl vyplněn. '
         email:
-            subject: null
-            from: null
-            send: null
+            subject: 'Feedback: %předmět%'
+            from: 'Od: %linkUživatele%'
+            send: 'Odesláno: %LinkStranky%'
