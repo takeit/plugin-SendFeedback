@@ -1,20 +1,20 @@
-Plugins: null
+Plugins: 'وحدات قابسة'
 plugin:
     feedback:
         btn:
-            save: null
-        titlecontent: null
+            save: حفظ
+        titlecontent: 'أرسل إعدادات بيانات التقييم'
         label:
-            menu: null
-            attachment: null
-            subject: null
-            message: null
-            toemailsmall: null
-            toemail: null
+            menu: 'أرسل بيانات التقييم'
+            attachment: 'أشكال الملفات المسموحة: صور (jpg,jpeg, png, gif)، وثائق (pdf)'
+            subject: الموضوع
+            message: الرسالة
+            toemailsmall: 'عنوان البريد الإلكتروني'
+            toemail: 'عنوان البريد الإلكتروني الذي سترسل إليه رسائل بيانات التقييم.'
         msg:
-            saved: null
-            error: null
-            success: null
+            saved: 'تم الحفظ بنجاح'
+            error: 'حدث خطأ في حفظ التغييرات.'
+            success: 'تم إرسال رسالتك.'
             errorlogged: null
             errorfile: null
             errorsize: null
