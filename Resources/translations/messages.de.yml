@@ -17,7 +17,7 @@ plugin:
             success: 'Ihre Nachricht wurde gesendet.'
             errorlogged: 'Sie müssen angemeldet sein, um Feedback zu senden.'
             errorfile: 'Falsche Dateierweiterung!'
-            errorsize: 'Größe der hochgeladenen Datei ist zu groß! Max. Dateigröße ist %size%'
+            errorsize: null
             successimage: 'Das Bild wird hochgeladen und Ihre Nachricht wird gesendet.'
             successfile: 'Datei wird hochgeladen und Ihre Nachricht wird gesendet.'
             banned: 'Sie wurden für die Feedback-Funktion gesperrt und können kein Feedback mehr senden. '

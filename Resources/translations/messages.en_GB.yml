@@ -17,7 +17,7 @@ plugin:
             success: 'Your message has been sent.'
             errorlogged: 'You have to be logged in to send feedback messages.'
             errorfile: 'Wrong file extension!'
-            errorsize: 'Size of uploaded file is too big! Max file size is %size%'
+            errorsize: null
             successimage: 'Image was uploaded and your message was sent.'
             successfile: 'File was uploaded and your message was sent.'
             banned: 'You have been banned from writing feedback messages!'
