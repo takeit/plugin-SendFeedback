@@ -17,7 +17,7 @@ plugin:
             success: 'Din besked blev sendt.'
             errorlogged: 'Du skal være logget ind for at sende feedback.'
             errorfile: 'Forkert fil endelse!'
-            errorsize: null
+            errorsize: 'Filen er for stor! Maksimal fil størrelse er %size%'
             successimage: 'Billedet blev uploadet og din besked blev sendt.'
             successfile: 'Filen blev uploadet og din besked blev sendt.'
             banned: 'Du er blevet udelukket fra at skrive feedback.'
