@@ -1,28 +1,28 @@
-Plugins: null
+Plugins: Plaqinlər
 plugin:
     feedback:
         btn:
-            save: null
-        titlecontent: null
+            save: Saxla
+        titlecontent: 'Rəy parametrlərini göndər'
         label:
-            menu: null
-            attachment: null
-            subject: null
-            message: null
-            toemailsmall: null
-            toemail: null
+            menu: 'Rəy göndər'
+            attachment: 'İcazəli fayl formatları: şəkillər (jpg, jpeg, png, gif), sənədlər (pdf)'
+            subject: Başlıq
+            message: Mesaj
+            toemailsmall: 'E-mail ünvan'
+            toemail: 'Rəy məktubunun göndəriləcəyi e-mail ünvan.'
         msg:
-            saved: null
-            error: null
-            success: null
-            errorlogged: null
-            errorfile: null
-            errorsize: null
-            successimage: null
-            successfile: null
-            banned: null
-            notfilled: null
+            saved: 'Uğurla saxlandı'
+            error: 'Dəyişikliklərin saxlanması zamanı xəta baş verdi.'
+            success: 'Sənin mesajın göndərildi.'
+            errorlogged: 'Rəy göndərmək üçün sayta giriş etməlisən.'
+            errorfile: 'Səhv fayl həcmi!'
+            errorsize: 'Yüklənən faylın ölçüsü çox böyükdür! maksimal fayl ölçüsü budur: %size%'
+            successimage: 'Şəkil yükləndi və mesajın göndərildi.'
+            successfile: 'Fayl yükləndi və mesajın göndərildi.'
+            banned: 'Rəy yazma əməliyyatı üçün kilidlənmisən.'
+            notfilled: 'Rəy məlumatı daxil edilməyib.'
         email:
-            subject: null
-            from: null
-            send: null
+            subject: 'Rəy: %subject%'
+            from: 'Göndərən: %suserLink%'
+            send: 'Mənbə: %siteLink%'
