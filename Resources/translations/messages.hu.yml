@@ -14,7 +14,7 @@ plugin:
         msg:
             saved: null
             error: null
-            success: null
+            success: 'Az üzenet elküldése megtörtént.'
             errorlogged: null
             errorfile: null
             errorsize: null
