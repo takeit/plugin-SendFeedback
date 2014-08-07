@@ -6,7 +6,7 @@ plugin:
         titlecontent: null
         label:
             menu: null
-            attachment: null
+            attachment: 'Engedélyezett fájlformátumok: kép (jpg, jpeg, png, gif), dokumentum (pdf)'
             subject: null
             message: null
             toemailsmall: null
