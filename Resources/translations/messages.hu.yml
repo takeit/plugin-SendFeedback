@@ -1,20 +1,20 @@
-Plugins: null
+Plugins: Bővítmények
 plugin:
     feedback:
         btn:
-            save: null
-        titlecontent: null
+            save: Mentés
+        titlecontent: 'Visszajelzés küldés beállításai'
         label:
-            menu: null
-            attachment: 'Engedélyezett fájlformátumok: kép (jpg, jpeg, png, gif), dokumentum (pdf)'
-            subject: null
-            message: null
-            toemailsmall: null
-            toemail: null
+            menu: 'Visszajelzés küldése'
+            attachment: 'Engedélyezett fájlformátumok: képek (jpg, jpeg, png, gif), dokumentumok (pdf)'
+            subject: Tárgy
+            message: Üzenet
+            toemailsmall: 'E-mail cím'
+            toemail: 'Az e-mail cím, melyre a visszajelző üzenetek küldésre fognak kerülni.'
         msg:
-            saved: null
-            error: null
-            success: 'Az üzenet elküldése megtörtént.'
+            saved: 'A mentés sikerült.'
+            error: 'Hiba történt a változtatások mentésekor.'
+            success: null
             errorlogged: null
             errorfile: null
             errorsize: null
