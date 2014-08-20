@@ -14,15 +14,15 @@ plugin:
         msg:
             saved: 'A mentés sikerült.'
             error: 'Hiba történt a változtatások mentésekor.'
-            success: null
-            errorlogged: null
-            errorfile: null
-            errorsize: null
-            successimage: null
-            successfile: null
-            banned: null
-            notfilled: null
+            success: 'Az üzenet elküldése megtörtént.'
+            errorlogged: 'Visszajelzés küldéséhez be kell jelentkezned.'
+            errorfile: 'Rossz fájlkiterjesztés!'
+            errorsize: 'Túl nagy a feltöltött fájl mérete! A maximális fájlméret %size%'
+            successimage: 'A kép feltöltésre került, az üzenet elküldése megtörtént.'
+            successfile: 'A fájl feltöltésre került, az üzenet elküldése megtörtént.'
+            banned: 'Kitiltottak téged a visszajelzés írásból.'
+            notfilled: 'Nem történt meg a visszajelzés tartalmának kitöltése.'
         email:
-            subject: null
-            from: null
-            send: null
+            subject: 'Visszajelzés: %subject%'
+            from: 'Feladó: %userLink%'
+            send: 'Küldte: %siteLink%'
