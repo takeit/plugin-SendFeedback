@@ -10,7 +10,7 @@ namespace Newscoop\SendFeedbackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\SendFeedbackBundle\Form\Type\SendFeedbackType;
@@ -25,6 +25,7 @@ class SendFeedbackController extends Controller
 {
     /**
     * @Route("/plugin/send-feedback")
+    * @Method("POST")
     */
     public function indexAction(Request $request)
     {
