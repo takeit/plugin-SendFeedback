@@ -74,13 +74,13 @@ class SendFeedbackController extends Controller
                     $values = array(
                         'user' => $user,
                         'publication' => $parameters['publication'],
-                        'section' => $parameters['section'],
-                        'article' => $parameters['article'],
+                        'section' => isset($parameters['section']) ? $parameters['section'] : null,
+                        'article' => isset($parameters['article']) ? $parameters['article'] : null,
                         'subject' => $data['subject'],
                         'message' => $data['message'],
-                        'url' => $parameters['feedbackUrl'],
+                        'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : null,
                         'time_created' => new \DateTime(),
-                        'language' => $parameters['language'],
+                        'language' => isset($parameters['language']) ? $parameters['language'] : null,
                         'status' => 'pending',
                         'attachment_type' => 'none',
                         'attachment_id' => 0
