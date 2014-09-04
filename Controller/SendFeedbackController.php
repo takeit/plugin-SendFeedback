@@ -10,7 +10,7 @@ namespace Newscoop\SendFeedbackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\SendFeedbackBundle\Form\Type\SendFeedbackType;
@@ -25,6 +25,7 @@ class SendFeedbackController extends Controller
 {
     /**
     * @Route("/plugin/send-feedback")
+    * @Method("POST")
     */
     public function indexAction(Request $request)
     {
@@ -73,13 +74,13 @@ class SendFeedbackController extends Controller
                     $values = array(
                         'user' => $user,
                         'publication' => $parameters['publication'],
-                        'section' => $parameters['section'],
-                        'article' => $parameters['article'],
+                        'section' => isset($parameters['section']) ? $parameters['section'] : null,
+                        'article' => isset($parameters['article']) ? $parameters['article'] : null,
                         'subject' => $data['subject'],
                         'message' => $data['message'],
-                        'url' => $parameters['feedbackUrl'],
+                        'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : null,
                         'time_created' => new \DateTime(),
-                        'language' => $parameters['language'],
+                        'language' => isset($parameters['language']) ? $parameters['language'] : null,
                         'status' => 'pending',
                         'attachment_type' => 'none',
                         'attachment_id' => 0
