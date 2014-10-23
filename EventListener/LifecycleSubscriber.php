@@ -36,6 +36,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         $preferencesService = $this->container->get('system_preferences_service');
         $preferencesService->set('SendFeedbackEmail', 'email@example.com');
+        $preferencesService->set('AllowFeedbackFromNonUsers', 'N');
     }
 
     public function update(GenericEvent $event)
@@ -55,8 +56,12 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
             'option' => 'SendFeedbackEmail'
         ));
+        $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+            'option' => 'AllowFeedbackFromNonUsers'
+        ));
 
         $this->em->remove($removeEmail);
+        $this->em->remove($removeNonUserPref);
         $this->em->flush();
     }
 

@@ -35,6 +35,7 @@ class SendFeedbackController extends Controller
         $preferencesService = $this->container->get('system_preferences_service');
         $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
         $to = $preferencesService->SendFeedbackEmail;
+        $allowNonUsers = $preferencesService->AllowFeedbackFromNonUsers;
         $response = array();
         $parameters = $request->request->all();
         $form = $this->container->get('form.factory')->create(new SendFeedbackType(), array(), array());
@@ -49,7 +50,9 @@ class SendFeedbackController extends Controller
                 if (is_null($data['subject']) || is_null($data['message'])) {
                     $response['response'] = array(
                         'status' => false,
-                        'message' => $translator->trans('plugin.feedback.msg.notfilled')
+                        'message' => $translator->trans('plugin.feedback.msg.notfilled'),
+                        'post-subject' => $request->request->get('subject'),
+                        'post-message' => $request->request->get('message')
                     );
 
                     return new JsonResponse($response);
@@ -62,10 +65,24 @@ class SendFeedbackController extends Controller
                         $response['response'] = $translator->trans('plugin.feedback.msg.banned');
                     }
                 } else {
-                    $response['response'] = array(
-                        'status' => false,
-                        'message' => $translator->trans('plugin.feedback.msg.errorlogged')
-                    );
+                    if (!$allowNonUsers) {
+                        $response['response'] = array(
+                            'status' => false,
+                            'message' => $translator->trans('plugin.feedback.msg.errorlogged')
+                        );
+
+                        return new JsonResponse($response);
+                    } else {
+                        $emailService = $this->container->get('email');
+                        $emailService->send($data['subject'], $data['message'], $to);
+
+                         $response['response'] = array(
+                            'status' => true,
+                            'message' => $translator->trans('plugin.feedback.msg.success')
+                        );
+
+                        return new JsonResponse($response);
+                    }
                 }
 
                 if (empty($response['response'])) {
@@ -88,30 +105,15 @@ class SendFeedbackController extends Controller
 
                     if ($attachment) {
                         if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
-                            switch ($attachment->guessClientExtension()) {
-                                case 'png':
-                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
-                                    break;
-                                case 'jpg':
-                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
-                                    break;
-                                case 'jpeg':
-                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
-                                    break;
-                                case 'gif':
-                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
-                                    break;
-                                case 'pdf':
-                                    $response['response'] = $this->processAttachment($attachment, $user, $values);
-                                    break;
+                            if (in_array($attachment->guessClientExtension(), array('png','jpg','jpeg','gif','pdf'))) {
+                                $response['response'] = $this->processAttachment($attachment, $user, $values);
+                            } else {
+                                $response['response'] = array(
+                                    'status' => false,
+                                    'message' => $translator->trans('plugin.feedback.msg.errorfile')
+                                );
 
-                                default:
-                                    $response['response'] = array(
-                                        'status' => false,
-                                        'message' => $translator->trans('plugin.feedback.msg.errorfile')
-                                    );
-
-                                    return new JsonResponse($response);
+                                return new JsonResponse($response);
                             }
                         } else {
                             $response['response'] = array(

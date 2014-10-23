@@ -11,6 +11,9 @@ plugin:
       message: "Message"
       toemailsmall: "E-mail address"
       toemail: "E-mail address to which feedback messages will be sent."
+      allownonusers: "Allow Non Users to send feedback."
+      yesoption: "Yes"
+      nooption: "No"
     msg:
       saved: "Successfully saved"
       error: "Error occurred while saving changes."
