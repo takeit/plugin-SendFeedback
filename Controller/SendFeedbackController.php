@@ -60,9 +60,10 @@ class SendFeedbackController extends Controller
 
                 if ($user) {
                     $acceptanceRepository = $em->getRepository('Newscoop\Entity\Comment\Acceptance');
-
-                    if ($acceptanceRepository->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication'])) {
-                        $response['response'] = $translator->trans('plugin.feedback.msg.banned');
+		    if (isset($parameters['publication'])) {
+                    	if ($acceptanceRepository->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication'])) {
+                       	    $response['response'] = $translator->trans('plugin.feedback.msg.banned');
+                    	}
                     }
                 } else {
                     if (!$allowNonUsers) {
@@ -90,7 +91,7 @@ class SendFeedbackController extends Controller
 
                     $values = array(
                         'user' => $user,
-                        'publication' => $parameters['publication'],
+                        'publication' => isset($parameters['publication']) ? $parameters['publication'] : null,
                         'section' => isset($parameters['section']) ? $parameters['section'] : null,
                         'article' => isset($parameters['article']) ? $parameters['article'] : null,
                         'subject' => $data['subject'],
@@ -122,8 +123,10 @@ class SendFeedbackController extends Controller
                             );
                         }
                     } else {
-                        $feedbackRepository->save($feedback, $values);
-                        $feedbackRepository->flush();
+			if (isset($parameters['publication'])) {
+                            $feedbackRepository->save($feedback, $values);
+                            $feedbackRepository->flush();
+			}
                         $this->sendMail($values, $user, $to, $attachment);
 
                         $response['response'] = array(
@@ -133,8 +136,14 @@ class SendFeedbackController extends Controller
                     }
                 }
 
-                return new JsonResponse($response);
-            }
+            } else {
+                $response['response'] = array(
+                    'status' => false,
+                    'message' => 'Invalid Form' 
+                );
+	    }
+
+            return new JsonResponse($response);
         }
     }
 
