@@ -62,7 +62,7 @@ class SendFeedbackController extends Controller
                     $acceptanceRepository = $em->getRepository('Newscoop\Entity\Comment\Acceptance');
                     if (isset($parameters['publication'])) {
                     	if ($acceptanceRepository->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication'])) {
-                       	    $response['response'] = $translator->trans('plugin.feedback.msg.banned');
+                            $response['response'] = $translator->trans('plugin.feedback.msg.banned');
                     	}
                     }
                 } else {
