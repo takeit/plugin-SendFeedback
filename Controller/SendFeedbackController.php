@@ -36,6 +36,7 @@ class SendFeedbackController extends Controller
         $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
         $to = $preferencesService->SendFeedbackEmail;
         $allowNonUsers = $preferencesService->AllowFeedbackFromNonUsers;
+        $defaultFrom = $preferencesService->EmailFromAddress;
         $response = array();
         $parameters = $request->request->all();
         $form = $this->container->get('form.factory')->create(new SendFeedbackType(), array(), array());
@@ -75,7 +76,7 @@ class SendFeedbackController extends Controller
                         return new JsonResponse($response);
                     } else {
                         $emailService = $this->container->get('email');
-                        $emailService->send($data['subject'], $data['message'], $to);
+                        $emailService->send($data['subject'], $data['message'], $to, $defaultFrom);
 
                          $response['response'] = array(
                             'status' => true,
