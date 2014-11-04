@@ -1,8 +1,8 @@
-Plugins: null
+Plugins: 插件
 plugin:
     feedback:
         btn:
-            save: null
+            save: 保存
         titlecontent: null
         label:
             menu: null
