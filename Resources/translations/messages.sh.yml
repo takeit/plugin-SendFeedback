@@ -1,14 +1,14 @@
-Plugins: null
+Plugins: Pluginovi
 plugin:
     feedback:
         btn:
-            save: null
+            save: Snimi
         titlecontent: null
         label:
             menu: null
             attachment: null
-            subject: null
-            message: null
+            subject: Naslov
+            message: Poruka
             toemailsmall: null
             toemail: null
         msg:
