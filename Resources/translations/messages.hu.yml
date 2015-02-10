@@ -3,7 +3,7 @@ plugin:
     feedback:
         btn:
             save: Mentés
-        titlecontent: 'Visszajelzés küldés beállításai'
+        titlecontent: 'Visszajelzés küldésének beállításai'
         label:
             menu: 'Visszajelzés küldése'
             attachment: 'Engedélyezett fájlformátumok: képek (jpg, jpeg, png, gif), dokumentumok (pdf)'
