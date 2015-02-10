@@ -16,11 +16,23 @@ class SettingsType extends AbstractType
 {   
     public function buildForm(FormBuilderInterface $builder, array $options)
     {   
-        $builder->add('toEmail', 'email', array(
-            'label' => 'plugin.feedback.label.toemail',
-            'error_bubbling' => true,
-            'required' => true
-        ));
+        $builder
+            ->add('toEmail', 'email', array(
+                'label' => 'plugin.feedback.label.toemail',
+                'error_bubbling' => true,
+                'required' => true
+            ))
+            ->add('allowNonUsers', 'choice', array(
+                'choices' => array(
+                    'Y' => 'plugin.feedback.label.yesoption',
+                    'N' => 'plugin.feedback.label.nooption'
+                ),
+                'label' => 'plugin.feedback.label.allownonusers',
+                'error_bubbling' => true,
+                'multiple' => false,
+                'expanded' => true,
+                'required' => true
+            ));
     }
 
     public function getName()

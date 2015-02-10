@@ -27,13 +27,16 @@ class AdminController extends Controller
         $translator = $this->container->get('translator');
         $form = $this->container->get('form.factory')->create(new SettingsType(), array(
             'toEmail' => $preferencesService->SendFeedbackEmail,
+            'allowNonUsers' => $preferencesService->AllowFeedbackFromNonUsers,
         ), array());
         
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
                 $data = $form->getData();
+
                 $preferencesService->set('SendFeedbackEmail', $data['toEmail']);
+                $preferencesService->set('AllowFeedbackFromNonUsers', $data['allowNonUsers']);
                 $this->get('session')->getFlashBag()->add('success', $translator->trans('plugin.feedback.msg.success'));
 
                 return $this->redirect($this->generateUrl('newscoop_sendfeedback_admin_index'));
