@@ -2,7 +2,7 @@
     "name": "newscoop/send-feedback-plugin",
     "description": "Send feedback plugin.",
     "keywords": ["newscoop", "send", "feedback", "email", "cms", "widget"],
-    "version": "0.2",
+    "version": "0.3",
     "type": "newscoop-plugin",
     "license": "GPL-3.0",
     "authors": [
