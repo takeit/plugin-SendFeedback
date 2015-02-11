@@ -11,6 +11,9 @@ plugin:
             message: Nachricht
             toemailsmall: E-Mail-Adresse
             toemail: 'E-Mail-Adresse, an die Rückmeldungen gesendet werden soll.'
+            allownonusers: null
+            yesoption: null
+            nooption: null
         msg:
             saved: 'Erfolgreich gespeichert'
             error: 'Fehler beim Speichern der Änderungen.'

@@ -11,6 +11,9 @@ plugin:
             message: null
             toemailsmall: null
             toemail: null
+            allownonusers: 'Allow Non Users to send feedback.'
+            yesoption: Yes
+            nooption: No
         msg:
             saved: null
             error: null

@@ -11,6 +11,9 @@ plugin:
             message: Üzenet
             toemailsmall: 'E-mail cím'
             toemail: 'Az e-mail cím, melyre a visszajelző üzenetek küldésre fognak kerülni.'
+            allownonusers: null
+            yesoption: null
+            nooption: null
         msg:
             saved: 'A mentés sikerült.'
             error: 'Hiba történt a változtatások mentésekor.'

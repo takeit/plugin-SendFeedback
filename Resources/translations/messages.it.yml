@@ -11,6 +11,9 @@ plugin:
             message: null
             toemailsmall: null
             toemail: null
+            allownonusers: null
+            yesoption: null
+            nooption: null
         msg:
             saved: null
             error: null

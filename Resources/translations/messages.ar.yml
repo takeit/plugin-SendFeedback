@@ -11,6 +11,9 @@ plugin:
             message: الرسالة
             toemailsmall: 'عنوان البريد الإلكتروني'
             toemail: 'عنوان البريد الإلكتروني الذي سترسل إليه رسائل بيانات التقييم.'
+            allownonusers: null
+            yesoption: null
+            nooption: null
         msg:
             saved: 'تم الحفظ بنجاح'
             error: 'حدث خطأ في حفظ التغييرات.'

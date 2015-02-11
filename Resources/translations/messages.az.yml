@@ -11,6 +11,9 @@ plugin:
             message: Mesaj
             toemailsmall: 'E-mail ünvan'
             toemail: 'Rəy məktubunun göndəriləcəyi e-mail ünvan.'
+            allownonusers: null
+            yesoption: null
+            nooption: null
         msg:
             saved: 'Uğurla saxlandı'
             error: 'Dəyişikliklərin saxlanması zamanı xəta baş verdi.'

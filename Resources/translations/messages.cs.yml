@@ -11,6 +11,9 @@ plugin:
             message: Zpráva
             toemailsmall: 'E-mailová adresa'
             toemail: 'E-mailová adresa na kterou budou zaslány Feedback zprávy.'
+            allownonusers: null
+            yesoption: null
+            nooption: null
         msg:
             saved: 'Úspěšně uloženo'
             error: 'Během ukládání změn se vyskytla chyba.'
