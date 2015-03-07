@@ -11,9 +11,9 @@ plugin:
             message: Besked
             toemailsmall: 'E-mail adresse'
             toemail: 'E-mail adresse der skal modtage feedback beskeder.'
-            allownonusers: null
-            yesoption: null
-            nooption: null
+            allownonusers: 'Tillad feedback fra brugere der ikke er registrerede.'
+            yesoption: Ja
+            nooption: Nej
         msg:
             saved: Gemt
             error: 'Ændringerne kunne ikke gemmes.'
