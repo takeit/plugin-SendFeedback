@@ -1,0 +1,31 @@
+Plugins: null
+plugin:
+    feedback:
+        btn:
+            save: null
+        titlecontent: null
+        label:
+            menu: null
+            attachment: null
+            subject: null
+            message: null
+            toemailsmall: null
+            toemail: null
+            allownonusers: null
+            yesoption: null
+            nooption: null
+        msg:
+            saved: null
+            error: null
+            success: null
+            errorlogged: null
+            errorfile: null
+            errorsize: null
+            successimage: null
+            successfile: null
+            banned: null
+            notfilled: null
+        email:
+            subject: null
+            from: null
+            send: null
