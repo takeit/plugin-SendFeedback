@@ -1,12 +1,12 @@
-Plugins: Plug-iny
+Plugins: null
 plugin:
     feedback:
         btn:
             save: Uložit
-        titlecontent: 'Poslat Feedback nastavení'
+        titlecontent: null
         label:
-            menu: 'Zaslat Feedback'
-            attachment: 'Povolené formáty souborů: obrázky (jpg, jpeg, png, gif), documentů (pdf)'
+            menu: null
+            attachment: null
             subject: Předmět
             message: Zpráva
             toemailsmall: 'E-mailová adresa'
@@ -18,13 +18,13 @@ plugin:
             saved: 'Úspěšně uloženo'
             error: 'Během ukládání změn se vyskytla chyba.'
             success: 'Vaše zpráva byla poslána.'
-            errorlogged: 'Musíte být zalogováni, aby jste mohli poslat Feedback.'
+            errorlogged: null
             errorfile: 'Špatná přípona souboru!'
             errorsize: null
             successimage: 'Obrázek byl nahrán a vaše zpráva byla odeslána. '
             successfile: 'Soubor je vložen a vaše zpráva byla odeslána.'
-            banned: 'Bylo vám zakázano psát Feedbacky.'
-            notfilled: 'Obsah Feedbacku nebyl vyplněn. '
+            banned: null
+            notfilled: null
         email:
             subject: 'Feedback: %předmět%'
             from: 'Od: %linkUživatele%'
