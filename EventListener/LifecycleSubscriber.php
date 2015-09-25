@@ -36,6 +36,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         $preferencesService = $this->container->get('system_preferences_service');
         $preferencesService->set('SendFeedbackEmail', 'email@example.com');
+        $preferencesService->set('StoreFeedbackInDatabase', 'N');
+        $preferencesService->set('AllowFeedbackAttachments', 'N');
         $preferencesService->set('AllowFeedbackFromNonUsers', 'N');
     }
 
@@ -46,21 +48,43 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
         // Generate proxies for entities
         $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
+
+        $preferencesService = $this->container->get('system_preferences_service');
+        if ($preferencesService->get('SendFeedbackEmail', null) === null) {
+            $preferencesService->set('SendFeedbackEmail', 'email@example.com');
+        }
+        if ($preferencesService->get('StoreFeedbackInDatabase', null) === null) {
+            $preferencesService->set('StoreFeedbackInDatabase', 'N');
+        }
+        if ($preferencesService->get('AllowFeedbackAttachments', null) === null) {
+            $preferencesService->set('AllowFeedbackAttachments', 'N');
+        }
+        if ($preferencesService->get('AllowFeedbackFromNonUsers', null) === null) {
+            $preferencesService->set('AllowFeedbackFromNonUsers', 'N');
+        }
     }
 
     public function remove(GenericEvent $event)
-    {   
+    {
         $tool = new \Doctrine\ORM\Tools\SchemaTool($this->em);
         $tool->dropSchema($this->getClasses(), true);
 
         $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
             'option' => 'SendFeedbackEmail'
         ));
+        $removeDatabase = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+            'option' => 'StoreFeedbackInDatabase'
+        ));
+        $removeAttachments = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+            'option' => 'AllowFeedbackAttachments'
+        ));
         $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
             'option' => 'AllowFeedbackFromNonUsers'
         ));
 
         $this->em->remove($removeEmail);
+        $this->em->remove($removeDatabase);
+        $this->em->remove($removeAttachments);
         $this->em->remove($removeNonUserPref);
         $this->em->flush();
     }
