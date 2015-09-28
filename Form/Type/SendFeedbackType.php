@@ -14,10 +14,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class SendFeedbackType extends AbstractType
-{   
+{
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {   
-        $builder->add('subject', null, array(
+    {
+        $builder
+        ->add('first_name', 'text', array(
+            'label' => 'plugin.feedback.label.first_name',
+            'error_bubbling' => 'true',
+            'required' => true
+        ))
+        ->add('last_name', 'text', array(
+            'label' => 'plugin.feedback.label.last_name',
+            'error_bubbling' => 'true',
+            'required' => true
+        ))
+        ->add('email', 'email', array(
+            'label' => 'plugin.feedback.label.email',
+            'error_bubbling' => 'true',
+            'required' => true
+        ))
+        ->add('subject', null, array(
             'label' => 'plugin.feedback.label.subject',
             'error_bubbling' => true,
             'required' => true

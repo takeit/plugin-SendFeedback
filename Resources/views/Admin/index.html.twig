@@ -29,6 +29,12 @@
         {{ flashMessage }}
     </div>
 {% endfor %}
+
+<a href="https://wiki.sourcefabric.org/display/NPS/Send+Feedback+-+Contact+plugin" target="_blank" class="btn btn-sm btn-info pull-right">
+    {{ 'plugin.feedback.btn.readme'|trans }}
+    <span class="glyphicon glyphicon-new-window"></span>
+</a>
+
 <form action="{{ path('newscoop_sendfeedback_admin_index') }}" method="post" {{ form_enctype(form) }} >
     <table id="send-feedback-settingsTable" border="0" cellspacing="0" cellpadding="0" class="box_table">
         <tbody>
@@ -50,18 +56,6 @@
 
             <tr class="send-feedback-bg">
                 <td align="left" class="send-feedback-size send-feedback-border">
-                    {{ form_label(form.storeInDatabase) }} <br>
-                    <small>{{ 'plugin.feedback.label.storeindatabasesmall'|trans }}</small>
-                </td>
-            </tr>
-            <tr>
-                <td class="send-feedback-border">
-                    {{ form_widget(form.storeInDatabase, {'attr' : {'class' : 'form-control'}}) }}
-                </td>
-            </tr>
-
-            <tr class="send-feedback-bg">
-                <td align="left" class="send-feedback-size send-feedback-border">
                     {{ form_label(form.allowAttachments) }} <br>
                     <small>{{ 'plugin.feedback.label.allowattachmentssmall'|trans }}</small>
                 </td>
@@ -72,7 +66,6 @@
                 </td>
             </tr>
 
-
             <tr class="send-feedback-bg">
                 <td align="left" class="send-feedback-size send-feedback-border">
                     {{ form_label(form.allowNonUsers) }} <br>
@@ -82,6 +75,18 @@
             <tr>
                 <td class="send-feedback-border">
                     {{ form_widget(form.allowNonUsers, {'attr' : {'class' : 'form-control'}}) }}
+                </td>
+            </tr>
+
+            <tr class="send-feedback-bg">
+                <td align="left" class="send-feedback-size send-feedback-border">
+                    {{ form_label(form.storeInDatabase) }} <br>
+                    <small>{{ 'plugin.feedback.label.storeindatabasesmall'|trans }}</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="send-feedback-border">
+                    {{ form_widget(form.storeInDatabase, {'attr' : {'class' : 'form-control'}}) }}
                 </td>
             </tr>
 

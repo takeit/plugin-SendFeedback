@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Newscoop\SendFeedbackBundle
  * @author Rafał Muszyński <rafal.muszynski@sourcefabric.org>
@@ -44,23 +45,36 @@ class AdminController extends Controller
                     $emails = array($data['toEmail']);
                 }
 
+                $errors = array();
+                $errorMsg = array();
                 $emailConstraint = new EmailConstraint();
                 foreach ($emails as $email) {
                     $emailConstraint->message = $translator->trans('plugin.feedback.msg.errorinvalidemail', array('$1' => $email));
-                    $errors = $this->get('validator')->validateValue(
+                    $errors[] = $this->get('validator')->validateValue(
                         $email,
                         $emailConstraint
                     );
                 }
 
+                if ($data['allowNonUsers'] == 'Y' && $data['storeInDatabase'] == 'Y') {
+                     $errors[] = $translator->trans('plugin.feedback.msg.errorstoreindb');
+                }
+
                 if (count($errors) > 0) {
 
-                    $errorMsg = array();
                     foreach ($errors as $error) {
-                        $errorMsg[] = $error->getMessage();
+                        if (is_object($error)) {
+                            if (count($error) > 0) {
+                                $errorMsg[] = $error[0]->getMessage();
+                            }
+                        } else {
+                            $errorMsg[] = $error;
+                        }
                     }
-                    $this->get('session')->getFlashBag()->add('error', implode('<br>', $errorMsg));
+                }
 
+                if (count($errorMsg) > 0) {
+                    $this->get('session')->getFlashBag()->add('error', implode('<br>', $errorMsg));
                 } else {
                     $preferencesService->set('SendFeedbackEmail', $data['toEmail']);
                     $preferencesService->set('StoreFeedbackInDatabase', $data['storeInDatabase']);
