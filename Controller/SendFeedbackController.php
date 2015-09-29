@@ -140,7 +140,7 @@ class SendFeedbackController extends Controller
                             'email' => $data['email'],
                             'subject' => $data['subject'],
                             'message' => $data['message'],
-                            'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : '',
+                            'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : 'No url specified in form.',
                             'time_created' => new \DateTime(),
                             'language' => isset($parameters['language']) ? $parameters['language'] : null,
                             'status' => 'pending',
@@ -227,9 +227,9 @@ class SendFeedbackController extends Controller
             $preferencesService = $this->container->get('system_preferences_service');
             $userLink = sprintf(
                 '<a href="mailto:%s">%s %s</a>',
-                htmlspecialchars($data['email']),
-                htmlspecialchars($data['first_name']),
-                htmlspecialchars($data['last_name'])
+                htmlspecialchars($values['email']),
+                htmlspecialchars($values['first_name']),
+                htmlspecialchars($values['last_name'])
             );
             $fromAddress = $preferencesService->EmailFromAddress;
         }
@@ -322,7 +322,7 @@ class SendFeedbackController extends Controller
             $feedbackRepository->flush();
         }
 
-        $this->sendMail($values, $user, $toEmail, $file);
+        $this->sendMail($values, $user, $to, $file);
 
         $this->get('dispatcher')
             ->dispatch('document.delivered', new GenericEvent($this, array(
