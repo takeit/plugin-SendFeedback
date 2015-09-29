@@ -3,20 +3,28 @@ plugin:
   feedback:
     btn:
       save: Save
+      readme: 'View plugin readme'
     titlecontent: "Send Feedback settings"
     label:
       menu: "Send Feedback"
       attachment: "Allowed file formats: images (jpg, jpeg, png, gif), documents (pdf)"
       subject: "Subject"
       message: "Message"
-      toemailsmall: "E-mail address"
-      toemail: "E-mail address to which feedback messages will be sent."
-      allownonusers: "Allow Non Users to send feedback."
+      toemail: "E-mail address(es)"
+      toemailsmall: "E-mail addresses to which feedback messages will be sent. Seperate multiple address with a comma (,)."
+      storeindatabase: 'Store in the database?'
+      storeindatabasesmall: 'To store feedback messages in the database, the option allow everybody should be disabled. Only feedback messages from registered users can be stored. Also make you sure you add the hidden fields for publication, section and issue.'
+      allowattachments: 'Allow attachments?'
+      allowattachmentssmall: 'Allow users to send attachments. They will be uploaded in the media-archive with the status unapproved.'
+      allownonusers: "Allow everybody?"
+      allownonuserssmall: "When yes is selected all visitors can send feedback messages. If no is selected only registered and logged in user can."
       yesoption: "Yes"
       nooption: "No"
     msg:
       saved: "Successfully saved"
       error: "Error occurred while saving changes."
+      errorinvalidemail: "An invalid email address ($1) has been entered."
+      errorstoreindb: "Cannot store messages in database when non-users can submit feedback. Please disable the option 'Allow everybody'."
       success: "Your message has been sent."
       errorlogged: "You have to be logged in to send Feedback."
       errorfile: "Wrong file extension!"
@@ -24,8 +32,12 @@ plugin:
       successimage: "Image is uploaded and your message is sent."
       successfile: "File is uploaded and your message is sent."
       banned: "You have been banned from writing feedbacks."
-      notfilled: "Feedback content was not filled in."
+      notfilled: "Please fill in all the fields of the form."
+      erroremail: "The message cannot be sent to an email address ($1) which is not validated by the admin."
     email:
       subject: "Feedback: %subject%"
       from: "From: %userLink%"
       send: "Sent by: %siteLink%"
+      name: 'Name'
+      email: 'Email'
+      message: 'Message'

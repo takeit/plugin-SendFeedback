@@ -5,10 +5,12 @@
 
 {% block admin_stylesheets %}
 <style>
-#send-feedback-settingsTable {float: left; margin-top: 0px; margin-right: 25px;}
+#send-feedback-settingsTable {margin-top: 0px; margin-right: 25px;}
 .send-feedback-bg {background-color: #ECECEC;}
 .send-feedback-border {border-right: 1px solid #9d9d9d;}
 .send-feedback-size {width: 250px;}
+.send-feedback-email-big {width:500px; height:150px;}
+.send-feedback-email-big textarea {height:100%;}
 .alert {color: #C00; padding: 0; margin: 0;}
 </style>
 {% endblock %}
@@ -27,6 +29,12 @@
         {{ flashMessage }}
     </div>
 {% endfor %}
+
+<a href="https://wiki.sourcefabric.org/display/NPS/Send+Feedback+-+Contact+plugin" target="_blank" class="btn btn-sm btn-info pull-right">
+    {{ 'plugin.feedback.btn.readme'|trans }}
+    <span class="glyphicon glyphicon-new-window"></span>
+</a>
+
 <form action="{{ path('newscoop_sendfeedback_admin_index') }}" method="post" {{ form_enctype(form) }} >
     <table id="send-feedback-settingsTable" border="0" cellspacing="0" cellpadding="0" class="box_table">
         <tbody>
@@ -35,26 +43,50 @@
             </tr>
 
             <tr class="send-feedback-bg">
-                <td align="left" class="send-feedback-size send-feedback-border">   
+                <td align="left" class="send-feedback-size send-feedback-border">
                     {{ form_label(form.toEmail) }} <br>
                     <small>{{ 'plugin.feedback.label.toemailsmall'|trans }}</small>
                 </td>
             </tr>
             <tr>
-                <td class="send-feedback-border">
+                <td class="send-feedback-border send-feedback-email-big">
                     {{ form_widget(form.toEmail, {'attr' : {'class' : 'form-control'}}) }}
                 </td>
             </tr>
 
             <tr class="send-feedback-bg">
-                <td align="left" class="send-feedback-size send-feedback-border">   
+                <td align="left" class="send-feedback-size send-feedback-border">
+                    {{ form_label(form.allowAttachments) }} <br>
+                    <small>{{ 'plugin.feedback.label.allowattachmentssmall'|trans }}</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="send-feedback-border">
+                    {{ form_widget(form.allowAttachments, {'attr' : {'class' : 'form-control'}}) }}
+                </td>
+            </tr>
+
+            <tr class="send-feedback-bg">
+                <td align="left" class="send-feedback-size send-feedback-border">
                     {{ form_label(form.allowNonUsers) }} <br>
-                    <small>{{ 'plugin.feedback.label.allownonusers'|trans }}</small>
+                    <small>{{ 'plugin.feedback.label.allownonuserssmall'|trans }}</small>
                 </td>
             </tr>
             <tr>
                 <td class="send-feedback-border">
                     {{ form_widget(form.allowNonUsers, {'attr' : {'class' : 'form-control'}}) }}
+                </td>
+            </tr>
+
+            <tr class="send-feedback-bg">
+                <td align="left" class="send-feedback-size send-feedback-border">
+                    {{ form_label(form.storeInDatabase) }} <br>
+                    <small>{{ 'plugin.feedback.label.storeindatabasesmall'|trans }}</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="send-feedback-border">
+                    {{ form_widget(form.storeInDatabase, {'attr' : {'class' : 'form-control'}}) }}
                 </td>
             </tr>
 

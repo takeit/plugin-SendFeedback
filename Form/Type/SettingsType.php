@@ -13,13 +13,35 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class SettingsType extends AbstractType
-{   
+{
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {   
+    {
         $builder
-            ->add('toEmail', 'email', array(
+            ->add('toEmail', 'textarea', array(
                 'label' => 'plugin.feedback.label.toemail',
                 'error_bubbling' => true,
+                'required' => true
+            ))
+            ->add('storeInDatabase', 'choice', array(
+                'choices' => array(
+                    'Y' => 'plugin.feedback.label.yesoption',
+                    'N' => 'plugin.feedback.label.nooption'
+                ),
+                'label' => 'plugin.feedback.label.storeindatabase',
+                'error_bubbling' => true,
+                'multiple' => false,
+                'expanded' => true,
+                'required' => true
+            ))
+            ->add('allowAttachments', 'choice', array(
+                'choices' => array(
+                    'Y' => 'plugin.feedback.label.yesoption',
+                    'N' => 'plugin.feedback.label.nooption'
+                ),
+                'label' => 'plugin.feedback.label.allowattachments',
+                'error_bubbling' => true,
+                'multiple' => false,
+                'expanded' => true,
                 'required' => true
             ))
             ->add('allowNonUsers', 'choice', array(
