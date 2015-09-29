@@ -68,11 +68,11 @@ class SendFeedbackController extends Controller
                     $response['response'] = array(
                         'status' => false,
                         'message' => $translator->trans('plugin.feedback.msg.notfilled'),
-                        'post-first_name' => $request->request->get('sendFeedbackForm')['first_name'],
-                        'post-last_name' => $request->request->get('sendFeedbackForm')['last_name'],
-                        'post-email' => $request->request->get('sendFeedbackForm')['email'],
-                        'post-subject' => $request->request->get('sendFeedbackForm')['subject'],
-                        'post-message' => $request->request->get('sendFeedbackForm')['message']
+                        // 'post-first_name' => $request->request->get('sendFeedbackForm')['first_name'],
+                        // 'post-last_name' => $request->request->get('sendFeedbackForm')['last_name'],
+                        // 'post-email' => $request->request->get('sendFeedbackForm')['email'],
+                        // 'post-subject' => $request->request->get('sendFeedbackForm')['subject'],
+                        // 'post-message' => $request->request->get('sendFeedbackForm')['message']
                     );
                 }
 
@@ -191,7 +191,12 @@ class SendFeedbackController extends Controller
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse($response);
             } else {
-                $redirectUrl = (isset($parameters['redirect_path'])) ? $parameters['redirect_path'] : '/';
+                if (!$response['response']['status']) {
+                    $redirectUrl = (isset($parameters['feedbackUrl'])) ? $parameters['feedbackUrl'] : '/';
+                    $redirectUrl = $redirectUrl.'?feedback_error='.$respons['response']['message'];
+                } else {
+                    $redirectUrl = (isset($parameters['redirect_path'])) ? $parameters['redirect_path'] : '/';
+                }
                 return $this->redirect($redirectUrl);
             }
         }
