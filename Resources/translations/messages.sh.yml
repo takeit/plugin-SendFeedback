@@ -3,20 +3,28 @@ plugin:
     feedback:
         btn:
             save: Snimi
+            readme: null
         titlecontent: null
         label:
             menu: null
             attachment: null
             subject: Naslov
             message: Poruka
-            toemailsmall: null
             toemail: null
+            toemailsmall: null
+            storeindatabase: null
+            storeindatabasesmall: null
+            allowattachments: null
+            allowattachmentssmall: null
             allownonusers: null
+            allownonuserssmall: null
             yesoption: null
             nooption: null
         msg:
             saved: null
             error: null
+            errorinvalidemail: null
+            errorstoreindb: null
             success: null
             errorlogged: null
             errorfile: null
@@ -25,7 +33,11 @@ plugin:
             successfile: null
             banned: null
             notfilled: null
+            erroremail: null
         email:
             subject: null
             from: null
             send: null
+            name: null
+            email: null
+            message: null

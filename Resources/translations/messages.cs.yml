@@ -3,20 +3,28 @@ plugin:
     feedback:
         btn:
             save: Uložit
+            readme: null
         titlecontent: null
         label:
             menu: null
             attachment: null
             subject: Předmět
             message: Zpráva
-            toemailsmall: 'E-mailová adresa'
-            toemail: 'E-mailová adresa na kterou budou zaslány Feedback zprávy.'
+            toemail: null
+            toemailsmall: null
+            storeindatabase: null
+            storeindatabasesmall: null
+            allowattachments: null
+            allowattachmentssmall: null
             allownonusers: null
+            allownonuserssmall: null
             yesoption: null
             nooption: null
         msg:
             saved: 'Úspěšně uloženo'
             error: 'Během ukládání změn se vyskytla chyba.'
+            errorinvalidemail: null
+            errorstoreindb: null
             success: 'Vaše zpráva byla poslána.'
             errorlogged: null
             errorfile: 'Špatná přípona souboru!'
@@ -25,7 +33,11 @@ plugin:
             successfile: 'Soubor je vložen a vaše zpráva byla odeslána.'
             banned: null
             notfilled: null
+            erroremail: null
         email:
             subject: 'Feedback: %předmět%'
             from: 'Od: %linkUživatele%'
             send: 'Odesláno: %LinkStranky%'
+            name: null
+            email: null
+            message: null

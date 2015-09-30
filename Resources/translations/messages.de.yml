@@ -3,20 +3,28 @@ plugin:
     feedback:
         btn:
             save: Speichern
+            readme: null
         titlecontent: Feedback-Formular-Einstellungen
         label:
             menu: 'Sende Feedback'
             attachment: 'Erlaubte Dateiformate: Bilder (jpg, jpeg, png, gif), Dokumente (pdf)'
             subject: Thema
             message: Nachricht
-            toemailsmall: E-Mail-Adresse
-            toemail: 'E-Mail-Adresse, an die Rückmeldungen gesendet werden soll.'
+            toemail: null
+            toemailsmall: null
+            storeindatabase: null
+            storeindatabasesmall: null
+            allowattachments: null
+            allowattachmentssmall: null
             allownonusers: null
+            allownonuserssmall: null
             yesoption: null
             nooption: null
         msg:
             saved: 'Erfolgreich gespeichert'
             error: 'Fehler beim Speichern der Änderungen.'
+            errorinvalidemail: null
+            errorstoreindb: null
             success: 'Ihre Nachricht wurde gesendet.'
             errorlogged: 'Sie müssen angemeldet sein, um Feedback zu senden.'
             errorfile: 'Falsche Dateierweiterung!'
@@ -24,8 +32,12 @@ plugin:
             successimage: 'Das Bild wird hochgeladen und Ihre Nachricht wird gesendet.'
             successfile: 'Datei wird hochgeladen und Ihre Nachricht wird gesendet.'
             banned: 'Sie wurden für die Feedback-Funktion gesperrt und können kein Feedback mehr senden. '
-            notfilled: 'Feedbackformular wurde nicht ausgefüllt'
+            notfilled: null
+            erroremail: null
         email:
             subject: 'Feedback: %subject%'
             from: 'Von: %userLink%'
             send: 'Gesendet von: %siteLink%'
+            name: null
+            email: null
+            message: null

@@ -3,20 +3,28 @@ plugin:
     feedback:
         btn:
             save: Gem
+            readme: null
         titlecontent: 'Indstillinger for feedback'
         label:
             menu: 'Send feedback'
             attachment: 'Tilladte fil formater: Billeder (jpg, jpeg, png, gif), dokumenter (pdf)'
             subject: Emne
             message: Besked
-            toemailsmall: 'E-mail adresse'
-            toemail: 'E-mail adresse der skal modtage feedback beskeder.'
-            allownonusers: 'Tillad feedback fra brugere der ikke er registrerede.'
+            toemail: null
+            toemailsmall: null
+            storeindatabase: null
+            storeindatabasesmall: null
+            allowattachments: null
+            allowattachmentssmall: null
+            allownonusers: null
+            allownonuserssmall: null
             yesoption: Ja
             nooption: Nej
         msg:
             saved: Gemt
             error: 'Ændringerne kunne ikke gemmes.'
+            errorinvalidemail: null
+            errorstoreindb: null
             success: 'Din besked blev sendt.'
             errorlogged: 'Du skal være logget ind for at sende feedback.'
             errorfile: 'Forkert fil endelse!'
@@ -24,8 +32,12 @@ plugin:
             successimage: 'Billedet blev uploadet og din besked blev sendt.'
             successfile: 'Filen blev uploadet og din besked blev sendt.'
             banned: 'Du er blevet udelukket fra at skrive feedback.'
-            notfilled: 'Der mangler en feedback besked.'
+            notfilled: null
+            erroremail: null
         email:
             subject: 'Feedback: %subject%'
             from: 'Fra: %userLink%'
             send: 'Sendt af: %siteLink%'
+            name: null
+            email: null
+            message: null

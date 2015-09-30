@@ -3,20 +3,28 @@ plugin:
     feedback:
         btn:
             save: Mentés
+            readme: null
         titlecontent: 'Visszajelzés küldésének beállításai'
         label:
             menu: 'Visszajelzés küldése'
             attachment: 'Engedélyezett fájlformátumok: képek (jpg, jpeg, png, gif), dokumentumok (pdf)'
             subject: Tárgy
             message: Üzenet
-            toemailsmall: 'E-mail cím'
-            toemail: 'Az e-mail cím, melyre a visszajelző üzenetek küldésre fognak kerülni.'
+            toemail: null
+            toemailsmall: null
+            storeindatabase: null
+            storeindatabasesmall: null
+            allowattachments: null
+            allowattachmentssmall: null
             allownonusers: null
+            allownonuserssmall: null
             yesoption: null
             nooption: null
         msg:
             saved: 'A mentés sikerült.'
             error: 'Hiba történt a változtatások mentésekor.'
+            errorinvalidemail: null
+            errorstoreindb: null
             success: 'Az üzenet elküldése megtörtént.'
             errorlogged: 'Visszajelzés küldéséhez be kell jelentkezned.'
             errorfile: 'Rossz fájlkiterjesztés!'
@@ -24,8 +32,12 @@ plugin:
             successimage: 'A kép feltöltésre került, az üzenet elküldése megtörtént.'
             successfile: 'A fájl feltöltésre került, az üzenet elküldése megtörtént.'
             banned: 'Kitiltottak téged a visszajelzés írásból.'
-            notfilled: 'Nem történt meg a visszajelzés tartalmának kitöltése.'
+            notfilled: null
+            erroremail: null
         email:
             subject: 'Visszajelzés: %subject%'
             from: 'Feladó: %userLink%'
             send: 'Küldte: %siteLink%'
+            name: null
+            email: null
+            message: null

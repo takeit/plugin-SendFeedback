@@ -3,20 +3,28 @@ plugin:
     feedback:
         btn:
             save: حفظ
+            readme: null
         titlecontent: 'أرسل إعدادات بيانات التقييم'
         label:
             menu: 'أرسل بيانات التقييم'
             attachment: 'أشكال الملفات المسموحة: صور (jpg,jpeg, png, gif)، وثائق (pdf)'
             subject: الموضوع
             message: الرسالة
-            toemailsmall: 'عنوان البريد الإلكتروني'
-            toemail: 'عنوان البريد الإلكتروني الذي سترسل إليه رسائل بيانات التقييم.'
+            toemail: null
+            toemailsmall: null
+            storeindatabase: null
+            storeindatabasesmall: null
+            allowattachments: null
+            allowattachmentssmall: null
             allownonusers: null
+            allownonuserssmall: null
             yesoption: null
             nooption: null
         msg:
             saved: 'تم الحفظ بنجاح'
             error: 'حدث خطأ في حفظ التغييرات.'
+            errorinvalidemail: null
+            errorstoreindb: null
             success: 'تم إرسال رسالتك.'
             errorlogged: 'يجب أن يتم التسجيل حتى تتمكن من إرسال بيانات التقييم.'
             errorfile: 'تمديد الملف غير صالح!'
@@ -24,8 +32,12 @@ plugin:
             successimage: 'تم تحميل الصورة وتم إرسال رسالتك.'
             successfile: 'تم تحميل الملف وتم إرسال رسالتك.'
             banned: 'تم منعك من كتابة بيانات التقييم.'
-            notfilled: 'لم يتم ملأ محتوى بيانات التقييم.'
+            notfilled: null
+            erroremail: null
         email:
             subject: 'بيانات تقييم: %subject%'
             from: 'من: %userLink%'
             send: 'مرسل بواسطة: %siteLink%'
+            name: null
+            email: null
+            message: null
