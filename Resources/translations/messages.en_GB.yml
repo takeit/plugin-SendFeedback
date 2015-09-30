@@ -3,28 +3,28 @@ plugin:
     feedback:
         btn:
             save: Save
-            readme: null
+            readme: 'View plugin readme'
         titlecontent: 'Send Feedback settings'
         label:
             menu: 'Send Feedback'
             attachment: 'Allowed file formats: images (jpg, jpeg, png, gif), documents (pdf)'
             subject: Subject
             message: Message
-            toemail: null
-            toemailsmall: null
-            storeindatabase: null
-            storeindatabasesmall: null
-            allowattachments: null
-            allowattachmentssmall: null
-            allownonusers: null
-            allownonuserssmall: null
+            toemail: 'Email address(es)'
+            toemailsmall: 'Email addresses to which feedback messages will be sent. Separate multiple address with commas.'
+            storeindatabase: 'Store in the database?'
+            storeindatabasesmall: 'To store feedback messages in the database, the option ''Allow everybody?'' should be disabled. Only feedback messages from registered users can be stored. Also make you sure you add the hidden fields for publication, section and issue.'
+            allowattachments: 'Allow attachments?'
+            allowattachmentssmall: 'Allow users to send attachments. They will be uploaded in the Media Archive with the status ''unapproved''.'
+            allownonusers: 'Allow everybody?'
+            allownonuserssmall: 'When ''yes'' is selected, all visitors can send feedback messages. If ''no'' is selected, only registered and logged in users can.'
             yesoption: Yes
             nooption: No
         msg:
             saved: 'Successfully saved'
             error: 'Error occurred while saving changes.'
-            errorinvalidemail: null
-            errorstoreindb: null
+            errorinvalidemail: 'An invalid email address ($1) has been entered.'
+            errorstoreindb: 'Cannot store messages in database when non-users can submit feedback. Please disable the option ''Allow everybody''.'
             success: 'Your message has been sent.'
             errorlogged: 'You have to be logged in to send feedback messages.'
             errorfile: 'Wrong file extension!'
@@ -32,12 +32,12 @@ plugin:
             successimage: 'Image was uploaded and your message was sent.'
             successfile: 'File was uploaded and your message was sent.'
             banned: 'You have been banned from writing feedback messages!'
-            notfilled: null
-            erroremail: null
+            notfilled: 'Please fill in all the fields of the form.'
+            erroremail: 'The message cannot be sent to an email address ($1) which is not validated by the admin.'
         email:
             subject: 'Feedback: %subject%'
             from: 'From: %userLink%'
             send: 'Sent by: %siteLink%'
-            name: null
-            email: null
-            message: null
+            name: Name
+            email: Email
+            message: Message
