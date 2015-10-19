@@ -237,7 +237,7 @@ class SendFeedbackController extends Controller
         $message = $this->renderView(
             'NewscoopSendFeedbackBundle::email.txt.twig',
             array(
-                'userMessage' => $values['message'],
+                'userMessage' => nl2br($values['message']),
                 'from' => $translator->trans('plugin.feedback.email.from', array(
                     '%userLink%' => $userLink
                 )),
