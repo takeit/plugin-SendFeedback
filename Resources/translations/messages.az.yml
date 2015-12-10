@@ -36,7 +36,7 @@ plugin:
             erroremail: null
         email:
             subject: 'Rəy: %subject%'
-            from: 'Göndərən: %suserLink%'
+            from: 'Göndərən: %userLink%'
             send: 'Mənbə: %siteLink%'
             name: null
             email: null
