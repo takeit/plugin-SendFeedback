@@ -33,11 +33,14 @@ class SendFeedbackController extends Controller
         $translator = $this->container->get('translator');
         $em = $this->container->get('em');
         $preferencesService = $this->container->get('system_preferences_service');
+        $settingsEntity = $em
+            ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
+            ->findOneById(1);
 
-        $to = $preferencesService->SendFeedbackEmail;
-        $storeInDb = $preferencesService->StoreFeedbackInDatabase;
-        $allowAttachment = $preferencesService->AllowFeedbackAttachments;
-        $allowNonUsers = $preferencesService->AllowFeedbackFromNonUsers;
+        $to = $settingsEntity->getTo();
+        $storeInDb = $settingsEntity->getStoreInDatabase();
+        $allowAttachment = $settingsEntity->getAllowAttachments();
+        $allowNonUsers = $settingsEntity->getAllowAnonymous();
 
         $response = array('response' => '');
         $parameters = $request->request->all();
@@ -90,7 +93,7 @@ class SendFeedbackController extends Controller
                 }
 
                 if (!$userIsBanned && !$errorOccured) {
-                    if ($allowNonUsers == 'N' && is_null($user)) {
+                    if ($allowNonUsers == 0 && is_null($user)) {
                         $errorOccured = true;
                         $response['response'] = array(
                             'status' => false,
@@ -148,7 +151,7 @@ class SendFeedbackController extends Controller
                             'attachment_id' => 0
                         );
 
-                        if ($allowAttachment === 'Y' && $attachment) {
+                        if ($allowAttachment === 1 && $attachment) {
                             if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
                                 if (in_array($attachment->guessClientExtension(), array('png','jpg','jpeg','gif','pdf'))) {
                                     $response['response'] = $this->processAttachment($attachment, $user, $values, $to);
@@ -166,7 +169,7 @@ class SendFeedbackController extends Controller
                             }
                         } else {
 
-                            if (isset($parameters['publication']) && $storeInDb == 'Y' && $allowNonUsers == 'N') {
+                            if (isset($parameters['publication']) && $storeInDb == 1 && $allowNonUsers == 0) {
                                 $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
                                 $feedback = new Feedback();
                                 $feedbackRepository->save($feedback, $values);

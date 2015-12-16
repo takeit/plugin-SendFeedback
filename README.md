@@ -5,7 +5,7 @@ storing in database and uploading attachments.
 
 This plugin is compatbible with Newscoop 4.3 and higher.
 
-### Featrures
+### Features
 
 - Send feedback messages (supported fields: first name, last name, email, subject and message) 
 - Supports posting via AJAX and normal post with custom redirect page
@@ -16,6 +16,21 @@ This plugin is compatbible with Newscoop 4.3 and higher.
 ### Extended plugin documentation
 
 For more information please see our [wiki page](https://wiki.sourcefabric.org/display/NPS/Send+Feedback+-+Contact+plugin).
+
+### Read plugin settings
+
+With the help of the tag {{ get_feedback_settings }_ it's possible to read the
+plugin settings in the frontend. All current keys which can be read are listed
+below as well.
+
+```
+    {{ get_feedback_settings }}
+    {{ get_feedback_settings assign="mySettingVariable" }}
+    {{ mySettingVariable.to }} // Email addresses of valid receivers
+    {{ mySettingVariable.storeInDatabase }} // Whether the feedback will be stored in the database
+    {{ mySettingVariable.allowAttachments }} // Whether attachments are allowed
+    {{ mySettingVariable.allowAnonymous }} // Whether non-registered users can send feedback
+```
 
 ### Basic example
 

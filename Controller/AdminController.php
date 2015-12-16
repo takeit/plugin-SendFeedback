@@ -27,11 +27,15 @@ class AdminController extends Controller
     {
         $preferencesService = $this->container->get('system_preferences_service');
         $translator = $this->container->get('translator');
+        $em = $this->container->get('em');
+        $settingsEntity = $em
+            ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
+            ->findOneById(1);
         $form = $this->container->get('form.factory')->create(new SettingsType(), array(
-            'toEmail' => $preferencesService->SendFeedbackEmail,
-            'storeInDatabase' => $preferencesService->StoreFeedbackInDatabase,
-            'allowAttachments' => $preferencesService->AllowFeedbackAttachments,
-            'allowNonUsers' => $preferencesService->AllowFeedbackFromNonUsers,
+            'toEmail' => $settingsEntity->getTo(),
+            'storeInDatabase' => $settingsEntity->getStoreInDatabase(),
+            'allowAttachments' => $settingsEntity->getAllowAttachments(),
+            'allowNonUsers' => $settingsEntity->getAllowAnonymous(),
         ), array());
 
         if ($request->isMethod('POST')) {
@@ -56,7 +60,7 @@ class AdminController extends Controller
                     );
                 }
 
-                if ($data['allowNonUsers'] == 'Y' && $data['storeInDatabase'] == 'Y') {
+                if ($data['allowNonUsers'] == 1 && $data['storeInDatabase'] == 1) {
                      $errors[] = $translator->trans('plugin.feedback.msg.errorstoreindb');
                 }
 
@@ -76,10 +80,12 @@ class AdminController extends Controller
                 if (count($errorMsg) > 0) {
                     $this->get('session')->getFlashBag()->add('error', implode('<br>', $errorMsg));
                 } else {
-                    $preferencesService->set('SendFeedbackEmail', $data['toEmail']);
-                    $preferencesService->set('StoreFeedbackInDatabase', $data['storeInDatabase']);
-                    $preferencesService->set('AllowFeedbackAttachments', $data['allowAttachments']);
-                    $preferencesService->set('AllowFeedbackFromNonUsers', $data['allowNonUsers']);
+                    $settingsEntity->setTo($data['toEmail']);
+                    $settingsEntity->setStoreInDatabase($data['storeInDatabase']);
+                    $settingsEntity->setAllowAttachments($data['allowAttachments']);
+                    $settingsEntity->setAllowAnonymous($data['allowNonUsers']);
+                    $em->persist($settingsEntity);
+                    $em->flush();
 
                     $this->get('session')->getFlashBag()->add('success', $translator->trans('plugin.feedback.msg.saved'));
                 }
