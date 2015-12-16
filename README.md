@@ -26,10 +26,10 @@ below as well.
 ```
     {{ get_feedback_settings }}
     {{ get_feedback_settings assign="mySettingVariable" }}
-    {{ mySettingVariable.to }} // Email addresses of valid receivers
-    {{ mySettingVariable.storeInDatabase }} // Whether the feedback will be stored in the database
-    {{ mySettingVariable.allowAttachments }} // Whether attachments are allowed
-    {{ mySettingVariable.allowAnonymous }} // Whether non-registered users can send feedback
+    {{ $mySettingVariable.to }} // Email addresses of valid receivers
+    {{ $mySettingVariable.storeInDatabase }} // Whether the feedback will be stored in the database
+    {{ $mySettingVariable.allowAttachments }} // Whether attachments are allowed
+    {{ $mySettingVariable.allowAnonymous }} // Whether non-registered users can send feedback
 ```
 
 ### Basic example
