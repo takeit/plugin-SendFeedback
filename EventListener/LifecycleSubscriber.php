@@ -11,6 +11,7 @@ namespace Newscoop\SendFeedbackBundle\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Newscoop\EventDispatcher\Events\GenericEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Newscoop\SendFeedbackBundle\Entity\FeedbackSettings;
 
 /**
  * Event lifecycle management
@@ -34,11 +35,12 @@ class LifecycleSubscriber implements EventSubscriberInterface
         // Generate proxies for entities
         $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
 
-        $preferencesService = $this->container->get('system_preferences_service');
-        $preferencesService->set('SendFeedbackEmail', 'email@example.com');
-        $preferencesService->set('StoreFeedbackInDatabase', 'N');
-        $preferencesService->set('AllowFeedbackAttachments', 'N');
-        $preferencesService->set('AllowFeedbackFromNonUsers', 'N');
+        $settingsEntity = new FeedbackSettings();
+        $settingsEntity->setId(1);
+        $settingsEntity->setTo('email@example.com');
+        $settingsEntity->setStoreInDatabase(false);
+        $settingsEntity->setAllowAttachments(false);
+        $settingsEntity->setAllowAnonymous(false);
     }
 
     public function update(GenericEvent $event)
@@ -50,43 +52,58 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
 
         $preferencesService = $this->container->get('system_preferences_service');
-        if ($preferencesService->get('SendFeedbackEmail', null) === null) {
-            $preferencesService->set('SendFeedbackEmail', 'email@example.com');
+        $settingsEntity = $this
+            ->em
+            ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
+            ->findOneById(1);
+        if (is_null($settingsEntity)) {
+            $settingsEntity = new FeedbackSettings();
+            $settingsEntity->setId(1);
         }
-        if ($preferencesService->get('StoreFeedbackInDatabase', null) === null) {
-            $preferencesService->set('StoreFeedbackInDatabase', 'N');
+        if ($preferencesService->get('SendFeedbackEmail', null) === null) {
+            $settingsEntity->setTo('email@example.com');
+        } else {
+            $settingsEntity->setTo($preferencesService->get('SendFeedbackEmail'));
+            $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                'option' => 'SendFeedbackEmail'
+            ));
+            $this->em->remove($removeEmail);
+        }
+        if ($preferencesService->get('SendFeedbackEmail', null) === null) {
+            $settingsEntity->setStoreInDatabase(false);
+        } else {
+            $settingsEntity->setStoreInDatabase((($preferencesService->get('StoreFeedbackInDatabase') == 'N') ? false : true));
+            $removeDatabase = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                'option' => 'StoreFeedbackInDatabase'
+            ));
+            $this->em->remove($removeDatabase);
         }
         if ($preferencesService->get('AllowFeedbackAttachments', null) === null) {
-            $preferencesService->set('AllowFeedbackAttachments', 'N');
+            $settingsEntity->setAllowAttachments(false);
+        } else {
+            $settingsEntity->setAllowAttachments((($preferencesService->get('AllowFeedbackAttachments') == 'N') ? false : true));
+            $removeAttachments = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                'option' => 'AllowFeedbackAttachments'
+            ));
+            $this->em->remove($removeAttachments);
         }
         if ($preferencesService->get('AllowFeedbackFromNonUsers', null) === null) {
-            $preferencesService->set('AllowFeedbackFromNonUsers', 'N');
+            $settingsEntity->setAllowAnonymous(false);
+        } else {
+            $settingsEntity->setAllowAnonymous((($preferencesService->get('AllowFeedbackFromNonUsers') == 'N') ? false : true));
+            $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                'option' => 'AllowFeedbackFromNonUsers'
+            ));
+            $this->em->remove($removeNonUserPref);
         }
+        $this->em->persist($settingsEntity);
+        $this->em->flush();
     }
 
     public function remove(GenericEvent $event)
     {
         $tool = new \Doctrine\ORM\Tools\SchemaTool($this->em);
         $tool->dropSchema($this->getClasses(), true);
-
-        $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-            'option' => 'SendFeedbackEmail'
-        ));
-        $removeDatabase = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-            'option' => 'StoreFeedbackInDatabase'
-        ));
-        $removeAttachments = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-            'option' => 'AllowFeedbackAttachments'
-        ));
-        $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-            'option' => 'AllowFeedbackFromNonUsers'
-        ));
-
-        $this->em->remove($removeEmail);
-        $this->em->remove($removeDatabase);
-        $this->em->remove($removeAttachments);
-        $this->em->remove($removeNonUserPref);
-        $this->em->flush();
     }
 
     public static function getSubscribedEvents()
@@ -99,6 +116,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
     }
 
     private function getClasses(){
-        return array();
+        return array(
+            $this->em->getClassMetadata('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings'),
+        );
     }
 }
