@@ -24,8 +24,8 @@ class SettingsType extends AbstractType
             ))
             ->add('storeInDatabase', 'choice', array(
                 'choices' => array(
-                    'Y' => 'plugin.feedback.label.yesoption',
-                    'N' => 'plugin.feedback.label.nooption'
+                    '1' => 'plugin.feedback.label.yesoption',
+                    '0' => 'plugin.feedback.label.nooption'
                 ),
                 'label' => 'plugin.feedback.label.storeindatabase',
                 'error_bubbling' => true,
@@ -35,8 +35,8 @@ class SettingsType extends AbstractType
             ))
             ->add('allowAttachments', 'choice', array(
                 'choices' => array(
-                    'Y' => 'plugin.feedback.label.yesoption',
-                    'N' => 'plugin.feedback.label.nooption'
+                    '1' => 'plugin.feedback.label.yesoption',
+                    '0' => 'plugin.feedback.label.nooption'
                 ),
                 'label' => 'plugin.feedback.label.allowattachments',
                 'error_bubbling' => true,
@@ -46,8 +46,8 @@ class SettingsType extends AbstractType
             ))
             ->add('allowNonUsers', 'choice', array(
                 'choices' => array(
-                    'Y' => 'plugin.feedback.label.yesoption',
-                    'N' => 'plugin.feedback.label.nooption'
+                    '1' => 'plugin.feedback.label.yesoption',
+                    '0' => 'plugin.feedback.label.nooption'
                 ),
                 'label' => 'plugin.feedback.label.allownonusers',
                 'error_bubbling' => true,
