@@ -1,8 +1,26 @@
-{{ from }} <br>
+{{ 'plugin.feedback.email.intro'|trans({'%siteName%': siteName})|raw }}
+
+<b>{{ 'plugin.feedback.email.details_txt'|trans }}</b>
+================================================================================
+
+{% if name %}
+    {{ 'plugin.feedback.email.name'|trans }}: {{ name }}
+{% endif %}
+{% if profile %}
+    {{ 'plugin.feedback.email.profile'|trans }}: <a href="{{ profile }}">{{ profile }}</a>
+    {{ 'plugin.feedback.email.profile_txt'|trans }}
+{% endif %}
+{% if email %}
+    {{ 'plugin.feedback.email.email'|trans }}: {{ email }}
+{% endif %}
+{% if page %}
+    {{ 'plugin.feedback.email.page'|trans }}: {{ page }}
+{% endif %}
+
+
+<b>{{ 'plugin.feedback.email.message_txt'|trans }}</b>
+================================================================================
+
 {% autoescape 'html' %}
-{{ send }} <br><br>
-
-
-{{ userMessage|nl2br }} <br>
-
+{{ message|nl2br }} <br>
 {% endautoescape %}

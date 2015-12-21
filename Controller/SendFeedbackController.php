@@ -219,34 +219,29 @@ class SendFeedbackController extends Controller
     {
         $translator = $this->container->get('translator');
         $emailService = $this->container->get('email');
+        $preferencesService = $this->container->get('system_preferences_service');
+
+        $userProfile = null;
+        $siteName = $preferencesService->SiteTitle;
+        $fromAddress = $preferencesService->EmailFromAddress;
 
         if ($user instanceof \Newscoop\Entity\User) {
             $zendRouter = $this->container->get('zend_router');
             $request = $this->container->get('request');
             $link = $request->getScheme() . '://' . $request->getHttpHost();
-            $userLink = $link . $zendRouter->assemble(array('controller' => 'user', 'action' => 'profile', 'module' => 'default')) ."/". urlencode($user->getUsername());
+            $userProfile = $link . $zendRouter->assemble(array('controller' => 'user', 'action' => 'profile', 'module' => 'default')) ."/". urlencode($user->getUsername());
             $fromAddress = $user->getEmail();
-        } else {
-            $preferencesService = $this->container->get('system_preferences_service');
-            $userLink = sprintf(
-                '<a href="mailto:%s">%s %s</a>',
-                htmlspecialchars($values['email']),
-                htmlspecialchars($values['first_name']),
-                htmlspecialchars($values['last_name'])
-            );
-            $fromAddress = $preferencesService->EmailFromAddress;
         }
 
         $message = $this->renderView(
             'NewscoopSendFeedbackBundle::email.txt.twig',
             array(
-                'userMessage' => $values['message'],
-                'from' => $translator->trans('plugin.feedback.email.from', array(
-                    '%userLink%' => $userLink
-                )),
-                'send' => $translator->trans('plugin.feedback.email.send', array(
-                    '%siteLink%' => $values['url'],
-                ))
+                'siteName' => $siteName,
+                'name' => sprintf('%s %s', $values['first_name'], $values['last_name']),
+                'profile' => $userProfile,
+                'email' => $values['email'],
+                'page' => $values['url'],
+                'message' => $values['message']
             )
         );
 
