@@ -17,16 +17,14 @@
 {% if page %}
     {{ 'plugin.feedback.email.page'|trans }}: {{ page }}<br>
 {% endif %}
+{% if subject %}
+    {{ 'plugin.feedback.email.subject'|trans }}: {{ subject }}<br>
+{% endif %}
 <br><br>
 
 <b>{{ 'plugin.feedback.email.message_txt'|trans }}</b><br>
 ==========================<br><br>
 
-{% if subject %}
-    {{ 'plugin.feedback.email.subject'|trans }}: {{ subject }}<br>
-{% endif %}
-
-{{ 'plugin.feedback.email.message'|trans }}:<br><br>
 {% autoescape 'html' %}
 {{ message|nl2br }} <br><br><br>
 {% endautoescape %}
