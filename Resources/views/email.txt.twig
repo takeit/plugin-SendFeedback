@@ -1,26 +1,32 @@
-{{ 'plugin.feedback.email.intro'|trans({'%siteName%': siteName})|raw }}
+{{ 'plugin.feedback.email.intro'|trans({'%siteName%': siteName})|raw }}<br><br><br>
 
-<b>{{ 'plugin.feedback.email.details_txt'|trans }}</b>
-================================================================================
+
+<b>{{ 'plugin.feedback.email.details_txt'|trans }}</b><br>
+================================================================================<br><br>
 
 {% if name %}
-    {{ 'plugin.feedback.email.name'|trans }}: {{ name }}
+    {{ 'plugin.feedback.email.name'|trans }}: {{ name }}<br>
 {% endif %}
 {% if profile %}
-    {{ 'plugin.feedback.email.profile'|trans }}: <a href="{{ profile }}">{{ profile }}</a>
-    {{ 'plugin.feedback.email.profile_txt'|trans }}
+    {{ 'plugin.feedback.email.profile'|trans }}: <a href="{{ profile }}">{{ profile }}</a><br>
+    {{ 'plugin.feedback.email.profile_txt'|trans }}<br>
 {% endif %}
 {% if email %}
-    {{ 'plugin.feedback.email.email'|trans }}: {{ email }}
+    {{ 'plugin.feedback.email.email'|trans }}: {{ email }}<br>
 {% endif %}
 {% if page %}
-    {{ 'plugin.feedback.email.page'|trans }}: {{ page }}
+    {{ 'plugin.feedback.email.page'|trans }}: {{ page }}<br>
+{% endif %}
+<br><br>
+
+<b>{{ 'plugin.feedback.email.message_txt'|trans }}</b><br>
+================================================================================<br><br>
+
+{% if subject %}
+    {{ 'plugin.feedback.email.subject'|trans }}: {{ subject }}<br><br>
 {% endif %}
 
-
-<b>{{ 'plugin.feedback.email.message_txt'|trans }}</b>
-================================================================================
-
+{{ 'plugin.feedback.email.message'|trans }}:<br>
 {% autoescape 'html' %}
-{{ message|nl2br }} <br>
+{{ message|nl2br }} <br><br><br>
 {% endautoescape %}

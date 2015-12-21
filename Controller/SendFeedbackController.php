@@ -143,7 +143,7 @@ class SendFeedbackController extends Controller
                             'email' => $data['email'],
                             'subject' => $data['subject'],
                             'message' => $data['message'],
-                            'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : 'No url specified in form.',
+                            'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : null,
                             'time_created' => new \DateTime(),
                             'language' => isset($parameters['language']) ? $parameters['language'] : null,
                             'status' => 'pending',
@@ -241,11 +241,12 @@ class SendFeedbackController extends Controller
                 'profile' => $userProfile,
                 'email' => $values['email'],
                 'page' => $values['url'],
+                'subject' => $values['subject'],
                 'message' => $values['message']
             )
         );
 
-        $subject = $translator->trans('plugin.feedback.email.subject', array('%subject%' => $values['subject']));
+        $subject = $translator->trans('plugin.feedback.email.subject_mail', array('%subject%' => $values['subject']));
         $attachmentDir = '';
         if ($file instanceof \Newscoop\Image\LocalImage) {
             $imageService = $this->container->get('image');
