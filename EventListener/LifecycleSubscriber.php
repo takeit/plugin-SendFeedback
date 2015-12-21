@@ -59,42 +59,43 @@ class LifecycleSubscriber implements EventSubscriberInterface
         if (is_null($settingsEntity)) {
             $settingsEntity = new FeedbackSettings();
             $settingsEntity->setId(1);
-        }
-        if ($preferencesService->get('SendFeedbackEmail', null) === null) {
-            $settingsEntity->setTo('email@example.com');
-        } else {
-            $settingsEntity->setTo($preferencesService->get('SendFeedbackEmail'));
-            $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                'option' => 'SendFeedbackEmail'
-            ));
-            $this->em->remove($removeEmail);
-        }
-        if ($preferencesService->get('SendFeedbackEmail', null) === null) {
-            $settingsEntity->setStoreInDatabase(false);
-        } else {
-            $settingsEntity->setStoreInDatabase((($preferencesService->get('StoreFeedbackInDatabase') == 'N') ? false : true));
-            $removeDatabase = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                'option' => 'StoreFeedbackInDatabase'
-            ));
-            $this->em->remove($removeDatabase);
-        }
-        if ($preferencesService->get('AllowFeedbackAttachments', null) === null) {
-            $settingsEntity->setAllowAttachments(false);
-        } else {
-            $settingsEntity->setAllowAttachments((($preferencesService->get('AllowFeedbackAttachments') == 'N') ? false : true));
-            $removeAttachments = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                'option' => 'AllowFeedbackAttachments'
-            ));
-            $this->em->remove($removeAttachments);
-        }
-        if ($preferencesService->get('AllowFeedbackFromNonUsers', null) === null) {
-            $settingsEntity->setAllowAnonymous(false);
-        } else {
-            $settingsEntity->setAllowAnonymous((($preferencesService->get('AllowFeedbackFromNonUsers') == 'N') ? false : true));
-            $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                'option' => 'AllowFeedbackFromNonUsers'
-            ));
-            $this->em->remove($removeNonUserPref);
+
+            if ($preferencesService->get('SendFeedbackEmail', null) === null) {
+                $settingsEntity->setTo('email@example.com');
+            } else {
+                $settingsEntity->setTo($preferencesService->get('SendFeedbackEmail'));
+                $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                    'option' => 'SendFeedbackEmail'
+                ));
+                $this->em->remove($removeEmail);
+            }
+            if ($preferencesService->get('SendFeedbackEmail', null) === null) {
+                $settingsEntity->setStoreInDatabase(false);
+            } else {
+                $settingsEntity->setStoreInDatabase((($preferencesService->get('StoreFeedbackInDatabase') == 'N') ? false : true));
+                $removeDatabase = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                    'option' => 'StoreFeedbackInDatabase'
+                ));
+                $this->em->remove($removeDatabase);
+            }
+            if ($preferencesService->get('AllowFeedbackAttachments', null) === null) {
+                $settingsEntity->setAllowAttachments(false);
+            } else {
+                $settingsEntity->setAllowAttachments((($preferencesService->get('AllowFeedbackAttachments') == 'N') ? false : true));
+                $removeAttachments = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                    'option' => 'AllowFeedbackAttachments'
+                ));
+                $this->em->remove($removeAttachments);
+            }
+            if ($preferencesService->get('AllowFeedbackFromNonUsers', null) === null) {
+                $settingsEntity->setAllowAnonymous(false);
+            } else {
+                $settingsEntity->setAllowAnonymous((($preferencesService->get('AllowFeedbackFromNonUsers') == 'N') ? false : true));
+                $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
+                    'option' => 'AllowFeedbackFromNonUsers'
+                ));
+                $this->em->remove($removeNonUserPref);
+            }
         }
         $this->em->persist($settingsEntity);
         $this->em->flush();
