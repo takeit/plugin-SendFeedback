@@ -2,7 +2,7 @@
 
 
 <b>{{ 'plugin.feedback.email.details_txt'|trans }}</b><br>
-================================================================================<br><br>
+==========================<br><br>
 
 {% if name %}
     {{ 'plugin.feedback.email.name'|trans }}: {{ name }}<br>
@@ -20,13 +20,13 @@
 <br><br>
 
 <b>{{ 'plugin.feedback.email.message_txt'|trans }}</b><br>
-================================================================================<br><br>
+==========================<br><br>
 
 {% if subject %}
-    {{ 'plugin.feedback.email.subject'|trans }}: {{ subject }}<br><br>
+    {{ 'plugin.feedback.email.subject'|trans }}: {{ subject }}<br>
 {% endif %}
 
-{{ 'plugin.feedback.email.message'|trans }}:<br>
+{{ 'plugin.feedback.email.message'|trans }}:<br><br>
 {% autoescape 'html' %}
 {{ message|nl2br }} <br><br><br>
 {% endautoescape %}

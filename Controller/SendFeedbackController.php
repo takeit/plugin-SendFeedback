@@ -246,7 +246,7 @@ class SendFeedbackController extends Controller
             )
         );
 
-        $subject = $translator->trans('plugin.feedback.email.subject_mail', array('%subject%' => $values['subject']));
+        $subject = $translator->trans('plugin.feedback.email.subject_mail', array('%siteName%' => $siteName, '%subject%' => $values['subject']));
         $attachmentDir = '';
         if ($file instanceof \Newscoop\Image\LocalImage) {
             $imageService = $this->container->get('image');
