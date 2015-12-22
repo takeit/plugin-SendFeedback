@@ -35,9 +35,13 @@ plugin:
             notfilled: null
             erroremail: null
         email:
-            subject: 'بيانات تقييم: %subject%'
-            from: 'من: %userLink%'
-            send: 'مرسل بواسطة: %siteLink%'
+            subject_mail: null
+            subject: null
+            intro: null
+            page: null
             name: null
+            profile: null
+            profile_txt: null
             email: null
-            message: null
+            details_txt: null
+            message_txt: null
