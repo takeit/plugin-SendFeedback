@@ -15,7 +15,7 @@
     {{ 'plugin.feedback.email.email'|trans }}: {% autoescape 'html' %}{{ email }}{% endautoescape %}<br>
 {% endif %}
 {% if page %}
-    {{ 'plugin.feedback.email.page'|trans }}: {{ page }}<br>
+    {{ 'plugin.feedback.email.page'|trans }}: {% autoescape 'html' %}{{ page }}{% endautoescape %}<br>
 {% endif %}
 <br><br>
 
