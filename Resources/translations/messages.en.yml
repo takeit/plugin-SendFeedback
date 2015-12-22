@@ -44,5 +44,4 @@ plugin:
       profile_txt: 'The user who sent feedback is registered, the url is a link to the user profile.'
       email: 'Email address'
       details_txt: 'User details'
-      message: 'Text'
       message_txt: 'User message'

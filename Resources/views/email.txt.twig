@@ -5,29 +5,31 @@
 ==========================<br><br>
 
 {% if name %}
-    {{ 'plugin.feedback.email.name'|trans }}: {{ name }}<br>
+    {{ 'plugin.feedback.email.name'|trans }}: {% autoescape 'html' %}{{ name }}{% endautoescape %}<br>
 {% endif %}
 {% if profile %}
     {{ 'plugin.feedback.email.profile'|trans }}: <a href="{{ profile }}">{{ profile }}</a><br>
     {{ 'plugin.feedback.email.profile_txt'|trans }}<br>
 {% endif %}
 {% if email %}
-    {{ 'plugin.feedback.email.email'|trans }}: {{ email }}<br>
+    {{ 'plugin.feedback.email.email'|trans }}: {% autoescape 'html' %}{{ email }}{% endautoescape %}<br>
 {% endif %}
 {% if page %}
     {{ 'plugin.feedback.email.page'|trans }}: {{ page }}<br>
 {% endif %}
 <br><br>
 
-<b>{{ 'plugin.feedback.email.message_txt'|trans }}</b><br>
+<b>{{ 'plugin.feedback.email.subject'|trans }}</b><br>
+==========================<br><br>
+{% autoescape 'html' %}
+{{ subject }}
+{% endautoescape %}<br><br>
+
+<b>{{ 'plugin.feedback.email.message'|trans }}</b><br>
 ==========================<br><br>
 
-{% if subject %}
-    {{ 'plugin.feedback.email.subject'|trans }}: {{ subject }}<br><br>
-{% endif %}
-
-{{ 'plugin.feedback.email.message'|trans }}<br><br>
-
 {% autoescape 'html' %}
-{{ message|nl2br }} <br><br><br>
+{{ message|nl2br }}
 {% endautoescape %}
+<br><br><br>
+
