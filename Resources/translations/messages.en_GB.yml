@@ -35,13 +35,13 @@ plugin:
             notfilled: 'Please fill in all the fields of the form.'
             erroremail: 'The message cannot be sent to an email address ($1) which is not validated by the admin.'
         email:
-            subject_mail: null
-            subject: null
-            intro: null
-            page: null
-            name: null
-            profile: null
-            profile_txt: null
-            email: null
-            details_txt: null
-            message_txt: null
+            subject_mail: '%siteName% | New feedback message: %subject%'
+            subject: Subject
+            intro: 'Hello,<br><br>Someone sent a message via the feedback form on <b>%siteName%</b>.'
+            page: 'Sent from page'
+            name: 'Full name'
+            profile: 'User profile'
+            profile_txt: 'The user who sent feedback is registered, the URL is a link to the user profile.'
+            email: 'Email address'
+            details_txt: 'User details'
+            message_txt: 'User message'
