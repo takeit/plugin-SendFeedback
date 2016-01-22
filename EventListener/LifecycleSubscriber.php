@@ -41,6 +41,9 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $settingsEntity->setStoreInDatabase(false);
         $settingsEntity->setAllowAttachments(false);
         $settingsEntity->setAllowAnonymous(false);
+
+        $this->em->persist($settingsEntity);
+        $this->em->flush();
     }
 
     public function update(GenericEvent $event)
