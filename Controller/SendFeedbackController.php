@@ -18,6 +18,8 @@ use Newscoop\SendFeedbackBundle\Form\Type\SendFeedbackType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Newscoop\Entity\Feedback;
 use Newscoop\EventDispatcher\Events\GenericEvent;
+use Newscoop\Entity\Attachment;
+use Newscoop\Image\LocalImage;
 
 /**
  * Send feedback controller
@@ -42,6 +44,12 @@ class SendFeedbackController extends Controller
         $allowAttachment = $settingsEntity->getAllowAttachments();
         $allowNonUsers = $settingsEntity->getAllowAnonymous();
 
+        try {
+            $requestLanguage = $em->getRepository('Newscoop\Entity\Language')->findOneByCode($request->getLocale());
+        } catch (\Exception $e) {
+            // Default to english
+            $requestLanguage = 1;
+        }
         $response = array('response' => '');
         $parameters = $request->request->all();
         $form = $this->container->get('form.factory')->create(new SendFeedbackType(), array(), array());
@@ -145,13 +153,13 @@ class SendFeedbackController extends Controller
                             'message' => $data['message'],
                             'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : null,
                             'time_created' => new \DateTime(),
-                            'language' => isset($parameters['language']) ? $parameters['language'] : null,
+                            'language' => isset($parameters['language']) ? $parameters['language'] : $requestLanguage,
                             'status' => 'pending',
                             'attachment_type' => 'none',
                             'attachment_id' => 0
                         );
 
-                        if ($allowAttachment === 1 && $attachment) {
+                        if ($allowAttachment == 1 && $attachment) {
                             if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
                                 if (in_array($attachment->guessClientExtension(), array('png','jpg','jpeg','gif','pdf'))) {
                                     $response['response'] = $this->processAttachment($attachment, $user, $values, $to);
@@ -196,7 +204,14 @@ class SendFeedbackController extends Controller
             } else {
                 if (!$response['response']['status']) {
                     $redirectUrl = (isset($parameters['feedbackUrl'])) ? $parameters['feedbackUrl'] : '/';
-                    $redirectUrl = $redirectUrl.'?feedback_error='.$respons['response']['message'];
+                    $redirectUrlParts = parse_url($redirectUrl);
+
+                    $redirectQuery = array();
+                    parse_str($redirectUrlParts['query'], $redirectQuery);
+                    $redirectQuery['feedback_error'] = $response['response']['message'];
+                    $redirectUrlParts['query'] = http_build_query($redirectQuery);
+
+                    $redirectUrl = $this->unparse_url($redirectUrlParts);
                 } else {
                     $redirectUrl = (isset($parameters['redirect_path'])) ? $parameters['redirect_path'] : '/';
                 }
@@ -248,12 +263,12 @@ class SendFeedbackController extends Controller
 
         $subject = $translator->trans('plugin.feedback.email.subject_mail', array('%siteName%' => $siteName, '%subject%' => strip_tags($values['subject'])));
         $attachmentDir = '';
-        if ($file instanceof \Newscoop\Image\LocalImage) {
+        if ($file instanceof LocalImage) {
             $imageService = $this->container->get('image');
             $attachmentDir = $imageService->getImagePath().$file->getBasename();
         }
 
-        if ($file instanceof \Newscoop\Entity\Attachment) {
+        if ($file instanceof Attachment) {
             $attachmentService = $this->container->get('attachment');
             $attachmentDir = $attachmentService->getStorageLocation($file);
         }
@@ -276,24 +291,35 @@ class SendFeedbackController extends Controller
         $attachmentService = $this->container->get('attachment');
         $em = $this->container->get('em');
         $translator = $this->container->get('translator');
-        $preferencesService = $this->container->get('system_preferences_service');
         $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
-        $language = $em->getRepository('Newscoop\Entity\Language')->findOneById($values['language']);
+        $language = $values['language'];
+        if (!($language instanceof \Newscoop\Entity\Language)) {
+            $language = $em->getRepository('Newscoop\Entity\Language')->findOneById($language);
+        }
+
+        $settingsEntity = $em
+            ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
+            ->findOneById(1);
+        $storeInDb = $settingsEntity->getStoreInDatabase();
+        $allowNonUsers = $settingsEntity->getAllowAnonymous();
 
         $feedback = new Feedback();
-        $storeInDb = $preferencesService->StoreFeedbackInDatabase;
-        $allowNonUsers = $preferencesService->AllowFeedbackFromNonUsers;
         $source = array(
             'user' => $user,
             'source' => 'feedback'
         );
 
         if (strstr($attachment->getClientMimeType(), 'image')) {
+
             $image = $imageService->upload($attachment, $source);
+            $image->setStatus(LocalImage::STATUS_UNAPPROVED);
+            $em->persist($image);
+            $em->flush();
+
             $values['attachment_type'] = 'image';
             $values['attachment_id'] = $image->getId();
 
-            if (!$allowNonUsers && $storeInDb=='Y') {
+            if ($allowNonUsers == 0 && $storeInDb == 1) {
                 $feedbackRepository->save($feedback, $values);
                 $feedbackRepository->flush();
             }
@@ -313,10 +339,14 @@ class SendFeedbackController extends Controller
         }
 
         $file = $attachmentService->upload($attachment, '', $language, $source);
+        $file->setStatus(Attachment::STATUS_UNAPPROVED);
+        $em->persist($file);
+        $em->flush();
+
         $values['attachment_type'] = 'document';
         $values['attachment_id'] = $file->getId();
 
-        if (!$allowNonUsers && $storeInDb=='Y') {
+        if ($allowNonUsers == 0 && $storeInDb == 1) {
             $feedbackRepository->save($feedback, $values);
             $feedbackRepository->flush();
         }
@@ -333,5 +363,27 @@ class SendFeedbackController extends Controller
             'status' => true,
             'message' => $translator->trans('plugin.feedback.msg.successfile')
         );
+    }
+
+    /**
+     * Unparses a url which is parse with parse_url()
+     *
+     * @param  array $parsed_url
+     *
+     * @return string
+     */
+    private function unparse_url(array $parsed_url)
+    {
+        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+        $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+
+        return "$scheme$user$pass$host$port$path$query$fragment";
     }
 }
