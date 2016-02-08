@@ -1,15 +1,15 @@
-Plugins: null
+Plugins: Плагины
 plugin:
     feedback:
         btn:
-            save: null
+            save: Сохранить
             readme: null
         titlecontent: null
         label:
             menu: null
             attachment: null
-            subject: null
-            message: null
+            subject: Тема
+            message: Сообщение
             toemail: null
             toemailsmall: null
             storeindatabase: null
@@ -18,8 +18,8 @@ plugin:
             allowattachmentssmall: null
             allownonusers: null
             allownonuserssmall: null
-            yesoption: null
-            nooption: null
+            yesoption: Да
+            nooption: Нет
         msg:
             saved: null
             error: null
