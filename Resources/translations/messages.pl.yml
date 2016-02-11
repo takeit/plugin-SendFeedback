@@ -6,7 +6,7 @@ plugin:
             readme: null
         titlecontent: null
         label:
-            menu: null
+            menu: 'Wyślij nam swoją opinię'
             attachment: null
             subject: Temat
             message: Wiadomość
@@ -18,10 +18,10 @@ plugin:
             allowattachmentssmall: null
             allownonusers: null
             allownonuserssmall: null
-            yesoption: null
-            nooption: null
+            yesoption: Tak
+            nooption: Nie
         msg:
-            saved: null
+            saved: 'Zapisano pomyślnie'
             error: null
             errorinvalidemail: null
             errorstoreindb: null
