@@ -60,10 +60,6 @@ class AdminController extends Controller
                     );
                 }
 
-                if ($data['allowNonUsers'] == 1 && $data['storeInDatabase'] == 1) {
-                     $errors[] = $translator->trans('plugin.feedback.msg.errorstoreindb');
-                }
-
                 if (count($errors) > 0) {
 
                     foreach ($errors as $error) {

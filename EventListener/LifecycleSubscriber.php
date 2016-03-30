@@ -12,6 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Newscoop\EventDispatcher\Events\GenericEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Newscoop\SendFeedbackBundle\Entity\FeedbackSettings;
+use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
  * Event lifecycle management
@@ -41,9 +42,10 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $settingsEntity->setStoreInDatabase(false);
         $settingsEntity->setAllowAttachments(false);
         $settingsEntity->setAllowAnonymous(false);
-
         $this->em->persist($settingsEntity);
         $this->em->flush();
+
+        $this->createPluginUser();
     }
 
     public function update(GenericEvent $event)
@@ -102,6 +104,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
         }
         $this->em->persist($settingsEntity);
         $this->em->flush();
+
+        $this->createPluginUser();
     }
 
     public function remove(GenericEvent $event)
@@ -123,5 +127,23 @@ class LifecycleSubscriber implements EventSubscriberInterface
         return array(
             $this->em->getClassMetadata('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings'),
         );
+    }
+
+    private function createPluginUser()
+    {
+        $userService = $this->container->get('user');
+        if ($userService->checkUsername('sendfeedback')) {
+            $generator = new SecureRandom();
+            $userService->createUser(
+                'sendfeedback@newscoop.dev',
+                $generator->nextBytes(10),
+                'sendfeedback',
+                'Feedback Plugin',
+                '(Don\'t remove)',
+                null,
+                false,
+                array('4') // Editor
+            );
+        }
     }
 }

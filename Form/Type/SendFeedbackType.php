@@ -12,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SendFeedbackType extends AbstractType
 {
@@ -21,27 +22,42 @@ class SendFeedbackType extends AbstractType
         ->add('first_name', 'text', array(
             'label' => 'plugin.feedback.label.first_name',
             'error_bubbling' => 'true',
-            'required' => true
+            'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            )
         ))
         ->add('last_name', 'text', array(
             'label' => 'plugin.feedback.label.last_name',
             'error_bubbling' => 'true',
-            'required' => true
+            'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            )
         ))
         ->add('email', 'email', array(
             'label' => 'plugin.feedback.label.email',
             'error_bubbling' => 'true',
-            'required' => true
+            'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            )
         ))
         ->add('subject', null, array(
             'label' => 'plugin.feedback.label.subject',
             'error_bubbling' => true,
-            'required' => true
+            'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            )
         ))
         ->add('message', 'textarea', array(
             'label' => 'plugin.feedback.label.message',
             'error_bubbling' => true,
-            'required' => true
+            'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            )
         ))
         ->add('attachment', 'file', array(
             'label' => 'plugin.feedback.label.attachment',
