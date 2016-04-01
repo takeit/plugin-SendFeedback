@@ -1,13 +1,13 @@
 # Send feedback - Contact Plugin
 
-Plugin for basic contact form functionalities. Supports most common fields, supports 
+Plugin for basic contact form functionalities. Supports most common fields, supports
 storing in database and uploading attachments.
 
-This plugin is compatbible with Newscoop 4.3 and higher.
+This plugin is compatible with Newscoop 4.3 and higher.
 
 ### Features
 
-- Send feedback messages (supported fields: first name, last name, email, subject and message) 
+- Send feedback messages (supported fields: first name, last name, email, subject and message)
 - Supports posting via AJAX and normal post with custom redirect page
 - Attachments handling (only images and pdf documents), attach to mail or upload into Newscoop Media Library
 - Let site visitors decide who to send email to (with spam protection)
@@ -19,17 +19,15 @@ For more information please see our [wiki page](https://wiki.sourcefabric.org/di
 
 ### Read plugin settings
 
-With the help of the tag {{ get_feedback_settings }_ it's possible to read the
-plugin settings in the frontend. All current keys which can be read are listed
-below as well.
+With the help of the tag {{ get_feedback_settings }} it's possible to read the plugin settings in the frontend. All current keys which can be read are listed below as well.
 
 ```
-    {{ get_feedback_settings }}
-    {{ get_feedback_settings assign="mySettingVariable" }}
-    {{ $mySettingVariable.to }} // Email addresses of valid receivers
-    {{ $mySettingVariable.storeInDatabase }} // Whether the feedback will be stored in the database
-    {{ $mySettingVariable.allowAttachments }} // Whether attachments are allowed
-    {{ $mySettingVariable.allowAnonymous }} // Whether non-registered users can send feedback
+{{ get_feedback_settings }}
+{{ get_feedback_settings assign="mySettingVariable" }}
+{{ $mySettingVariable.to }} // Email addresses of valid receivers
+{{ $mySettingVariable.storeInDatabase }} // Whether the feedback will be stored in the database
+{{ $mySettingVariable.allowAttachments }} // Whether attachments are allowed
+{{ $mySettingVariable.allowAnonymous }} // Whether non-registered users can send feedback
 ```
 
 ### Basic example

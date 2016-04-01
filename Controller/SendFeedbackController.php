@@ -167,8 +167,7 @@ class SendFeedbackController extends Controller
 
             return $this->createResponse($request, array(
                 'response' => array(
-                    'status' => true,
-                    'message' => $translator->trans('plugin.feedback.msg.success')
+                    'status' => true
                 )
             ));
         } else {
@@ -267,6 +266,11 @@ class SendFeedbackController extends Controller
             $values['attachment_type'] = 'image';
             $values['attachment_id'] = $image->getId();
             $values['attachment'] = $image;
+
+            $this->get('dispatcher')->dispatch('image.delivered', new GenericEvent($this, array(
+                'user' => $user,
+                'image_id' => $image->getId()
+            )));
         } else {
             $attachment = $attachmentService->upload($file, '', $language, $source);
             $attachment->setStatus(Attachment::STATUS_UNAPPROVED);
@@ -276,13 +280,13 @@ class SendFeedbackController extends Controller
             $values['attachment_type'] = 'document';
             $values['attachment_id'] = $attachment->getId();
             $values['attachment'] = $attachment;
+
+            $this->get('dispatcher')->dispatch('document.delivered', new GenericEvent($this, array(
+                'user' => $user,
+                'document_id' => $attachment->getId()
+            )));
         }
 
-        $this->get('dispatcher')
-            ->dispatch('document.delivered', new GenericEvent($this, array(
-                'user' => $user,
-                'document_id' => $values['attachment_id']
-            )));
 
         return $values;
     }
@@ -309,7 +313,15 @@ class SendFeedbackController extends Controller
         return "$scheme$user$pass$host$port$path$query$fragment";
     }
 
-    private function createResponse($request, $response)
+    /**
+     * Create reponse object from passed dataType
+     *
+     * @param  Request $request
+     * @param  array $response
+     *
+     * @return Response
+     */
+    private function createResponse(Request $request, $response)
     {
         $parameters = $request->request->all();
         if ($request->isXmlHttpRequest()) {
