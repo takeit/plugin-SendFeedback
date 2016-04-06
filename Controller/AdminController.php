@@ -31,6 +31,7 @@ class AdminController extends Controller
         $settingsEntity = $em
             ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
             ->findOneById(1);
+
         $form = $this->container->get('form.factory')->create(new SettingsType(), array(
             'toEmail' => $settingsEntity->getTo(),
             'storeInDatabase' => $settingsEntity->getStoreInDatabase(),
@@ -54,18 +55,10 @@ class AdminController extends Controller
                 $emailConstraint = new EmailConstraint();
                 foreach ($emails as $email) {
                     $emailConstraint->message = $translator->trans('plugin.feedback.msg.errorinvalidemail', array('$1' => $email));
-                    $errors[] = $this->get('validator')->validateValue(
-                        $email,
-                        $emailConstraint
-                    );
-                }
-
-                if ($data['allowNonUsers'] == 1 && $data['storeInDatabase'] == 1) {
-                     $errors[] = $translator->trans('plugin.feedback.msg.errorstoreindb');
+                    $errors[] = $this->get('validator')->validateValue($email, $emailConstraint);
                 }
 
                 if (count($errors) > 0) {
-
                     foreach ($errors as $error) {
                         if (is_object($error)) {
                             if (count($error) > 0) {
@@ -92,7 +85,6 @@ class AdminController extends Controller
 
                 return $this->redirect($this->generateUrl('newscoop_sendfeedback_admin_index'));
             }
-
             $this->get('session')->getFlashBag()->add('error', $translator->trans('plugin.feedback.msg.error'));
 
             return $this->redirect($this->generateUrl('newscoop_sendfeedback_admin_index'));

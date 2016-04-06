@@ -35,189 +35,149 @@ class SendFeedbackController extends Controller
         $translator = $this->container->get('translator');
         $em = $this->container->get('em');
         $preferencesService = $this->container->get('system_preferences_service');
-        $settingsEntity = $em
-            ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
-            ->findOneById(1);
-
-        $to = $settingsEntity->getTo();
-        $storeInDb = $settingsEntity->getStoreInDatabase();
-        $allowAttachment = $settingsEntity->getAllowAttachments();
-        $allowNonUsers = $settingsEntity->getAllowAnonymous();
+        $pluginSettings = $em->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')->findOneById(1);
+        $to = $pluginSettings->getTo();
+        $allowNonUsers = $pluginSettings->getAllowAnonymous();
 
         try {
-            $requestLanguage = $em->getRepository('Newscoop\Entity\Language')->findOneByCode($request->getLocale());
+            $locale = $em->getRepository('Newscoop\Entity\Language')->findOneByCode($request->getLocale());
         } catch (\Exception $e) {
-            // Default to english
-            $requestLanguage = 1;
+            $locale = 1; // Default to english
         }
-        $response = array('response' => '');
-        $parameters = $request->request->all();
-        $form = $this->container->get('form.factory')->create(new SendFeedbackType(), array(), array());
 
-        if ($request->isMethod('POST')) {
-            $form->bind($request);
-            if ($form->isValid()) {
-                $data = $form->getData();
-                try {
-                    $user = $this->container->get('user')->getCurrentUser();
-                } catch(\Exception $e) {
-                    $user = null;
-                }
-                $attachment = $form['attachment']->getData();
-                $date = new \DateTime("now");
-                $userIsBanned = false;
-                $errorOccured = false;
-
-                if (
-                    is_null($data['first_name']) ||
-                    is_null($data['last_name']) ||
-                    is_null($data['email']) ||
-                    is_null($data['subject']) ||
-                    is_null($data['message'])
-                ) {
-                    $errorOccured = true;
-                    $response['response'] = array(
-                        'status' => false,
-                        'message' => $translator->trans('plugin.feedback.msg.notfilled'),
-                        // 'post-first_name' => $request->request->get('sendFeedbackForm')['first_name'],
-                        // 'post-last_name' => $request->request->get('sendFeedbackForm')['last_name'],
-                        // 'post-email' => $request->request->get('sendFeedbackForm')['email'],
-                        // 'post-subject' => $request->request->get('sendFeedbackForm')['subject'],
-                        // 'post-message' => $request->request->get('sendFeedbackForm')['message']
-                    );
-                }
-
-                if ($user && !$errorOccured) {
-                    $acceptanceRepository = $em->getRepository('Newscoop\Entity\Comment\Acceptance');
-                    if (isset($parameters['publication'])) {
-                    	if ($acceptanceRepository->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication'])) {
-                            $userIsBanned = true;
-                            $response['response'] = array(
-                                'status' => false,
-                                'message' => $translator->trans('plugin.feedback.msg.banned')
-                            );
-                    	}
-                    }
-                }
-
-                if (!$userIsBanned && !$errorOccured) {
-                    if ($allowNonUsers == 0 && is_null($user)) {
-                        $errorOccured = true;
-                        $response['response'] = array(
+        $form = $this->createForm(new SendFeedbackType(), array());
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $parameters = $request->request->all();
+            $data = $form->getData();
+            $userService = $this->container->get('user');
+            try {
+                $user = $userService->getCurrentUser();
+            } catch(\Exception $e) {
+                // return error if not allowed for annonymous and user not found
+                if ($allowNonUsers == 0) {
+                    return $this->createResponse($request, array(
+                        'response' => array(
                             'status' => false,
                             'message' => $translator->trans('plugin.feedback.msg.errorlogged')
-                        );
-                    } else {
+                        )
+                    ));
+                }
 
-                        // Check we the form supplied custom reciever
-                        if (isset($parameters['receivers'])) {
-                            if (strpos($to, ',') !== false) {
-                                $validEmails = array_map('trim', explode(',', $to));
-                            } else {
-                                $validEmails = array($to);
-                            }
-                            if (strpos($parameters['receivers'], ',') !== false) {
-                                $receivers = array_map('trim', explode(',', $parameters['receivers']));
-                            } else {
-                                $receivers = array($parameters['receivers']);
-                            }
-                            foreach ($receivers as $receiver) {
-                                if (!in_array($receiver, $validEmails)) {
-                                    $errorOccured = true;
-                                    $response['response'] = array(
-                                        'status' => false,
-                                        'message' => $translator->trans('plugin.feedback.msg.erroremail', array('$1' => $receiver))
-                                    );
-                                }
-                            }
-                            if (!$errorOccured) {
-                                $to = $receivers;
-                            }
-                        } else {
-                            if (strpos($to, ',') !== false) {
-                                $to = array_map('trim', explode(',', $to));
-                            }
-                        }
-                    }
+                // Load default plugin user
+                $user = $userService->loadUserByUsername('sendfeedback');
+            }
 
-                    if (!$errorOccured) {
-                        $values = array(
-                            'user' => $user,
-                            'publication' => isset($parameters['publication']) ? $parameters['publication'] : null,
-                            'section' => isset($parameters['section']) ? $parameters['section'] : null,
-                            'article' => isset($parameters['article']) ? $parameters['article'] : null,
-                            'first_name' => $data['first_name'],
-                            'last_name' => $data['last_name'],
-                            'email' => $data['email'],
-                            'subject' => $data['subject'],
-                            'message' => $data['message'],
-                            'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : null,
-                            'time_created' => new \DateTime(),
-                            'language' => isset($parameters['language']) ? $parameters['language'] : $requestLanguage,
-                            'status' => 'pending',
-                            'attachment_type' => 'none',
-                            'attachment_id' => 0
-                        );
+            // User exists and publication is set - check if not banned
+            if (!is_null($user) && isset($parameters['publication'])) {
+                $userIsBanned = $em->getRepository('Newscoop\Entity\Comment\Acceptance')
+                    ->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication']);
+            	if ($userIsBanned) {
+                    return $this->createResponse($request, array(
+                        'response' => array(
+                            'status' => false,
+                            'message' => $translator->trans('plugin.feedback.msg.banned')
+                        )
+                    ));
+            	}
+            }
 
-                        if ($allowAttachment == 1 && $attachment) {
-                            if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
-                                if (in_array($attachment->guessClientExtension(), array('png','jpg','jpeg','gif','pdf'))) {
-                                    $response['response'] = $this->processAttachment($attachment, $user, $values, $to);
-                                } else {
-                                    $response['response'] = array(
-                                        'status' => false,
-                                        'message' => $translator->trans('plugin.feedback.msg.errorfile')
-                                    );
-                                }
-                            } else {
-                                $response['response'] = array(
-                                    'status' => false,
-                                    'message' => $translator->trans('plugin.feedback.msg.errorsize', array('%size%' => $preferencesService->MaxUploadFileSize))
-                                );
-                            }
-                        } else {
+            // Check if the form provides custom recievers
+            if (isset($parameters['receivers'])) {
+                $validEmails = array($to);
+                if (strpos($to, ',') !== false) {
+                    $validEmails = array_map('trim', explode(',', $to));
+                }
 
-                            if (isset($parameters['publication']) && $storeInDb == 1 && $allowNonUsers == 0) {
-                                $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
-                                $feedback = new Feedback();
-                                $feedbackRepository->save($feedback, $values);
-                                $feedbackRepository->flush();
-                			}
-                            $this->sendMail($values, $user, $to, $attachment);
+                if (strpos($parameters['receivers'], ',') !== false) {
+                    $receivers = array_map('trim', explode(',', $parameters['receivers']));
+                } else {
+                    $receivers = array($parameters['receivers']);
+                }
 
-                            $response['response'] = array(
-                                'status' => true,
-                                'message' => $translator->trans('plugin.feedback.msg.success')
-                            );
-                        }
+                foreach ($receivers as $receiver) {
+                    if (!in_array($receiver, $validEmails)) {
+                        return $this->createResponse($request, array(
+                            'response' => array(
+                                'status' => false,
+                                'message' => $translator->trans('plugin.feedback.msg.erroremail', array('$1' => $receiver))
+                            )
+                        ));
                     }
                 }
+                $to = $receivers;
             } else {
-                $response['response'] = array(
+                if (strpos($to, ',') !== false) {
+                    $to = array_map('trim', explode(',', $to));
+                }
+            }
+
+            $values = array(
+                'user' => $user,
+                'publication' => isset($parameters['publication']) ? $parameters['publication'] : null,
+                'section' => isset($parameters['section']) ? $parameters['section'] : null,
+                'article' => isset($parameters['article']) ? $parameters['article'] : null,
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'email' => $data['email'],
+                'subject' => $data['subject'],
+                'message' => $data['message'],
+                'url' => isset($parameters['feedbackUrl']) ? $parameters['feedbackUrl'] : '#',
+                'time_created' => new \DateTime(),
+                'time_updated' => new \DateTime(),
+                'language' => isset($parameters['language']) ? $parameters['language'] : $locale,
+                'status' => 'pending',
+                'attachment_type' => 'none',
+                'attachment_id' => 0
+            );
+
+            $attachment = $form['attachment']->getData();
+            $processedAttachment = null;
+            if ($pluginSettings->getAllowAttachments() == 1 && $attachment) {
+                if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
+                    if (in_array($attachment->guessClientExtension(), array('png','jpg','jpeg','gif','pdf'))) {
+                        $values = $this->processAttachment($attachment, $user, $values, $to);
+                        $processedAttachment = $values['attachment'];
+                        unset($values['attachment']);
+                    } else {
+                        return $this->createResponse($request, array(
+                            'response' => array(
+                                'status' => false,
+                                'message' => $translator->trans('plugin.feedback.msg.errorfile')
+                            )
+                        ));
+                    }
+                } else {
+                    return $this->createResponse($request, array(
+                        'response' => array(
+                            'status' => false,
+                            'message' => $translator->trans('plugin.feedback.msg.errorsize', array('%size%' => $preferencesService->MaxUploadFileSize))
+                        )
+                    ));
+                }
+            }
+
+            if ($pluginSettings->getStoreInDatabase() == 1) {
+                $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
+                $feedbackRepository->save(new Feedback(), $values);
+                $feedbackRepository->flush();
+            }
+
+            $this->sendMail($values, $user, $to, $processedAttachment);
+
+            return $this->createResponse($request, array(
+                'response' => array(
+                    'status' => true
+                )
+            ));
+        } else {
+            return $this->createResponse($request, array(
+                'response' => array(
                     'status' => false,
                     'message' => 'Invalid Form'
-                );
-    	    }
-
-            if ($request->isXmlHttpRequest()) {
-                return new JsonResponse($response);
-            } else {
-                if (!$response['response']['status']) {
-                    $redirectUrl = (isset($parameters['feedbackUrl'])) ? $parameters['feedbackUrl'] : '/';
-                    $redirectUrlParts = parse_url($redirectUrl);
-
-                    $redirectQuery = array();
-                    parse_str($redirectUrlParts['query'], $redirectQuery);
-                    $redirectQuery['feedback_error'] = $response['response']['message'];
-                    $redirectUrlParts['query'] = http_build_query($redirectQuery);
-
-                    $redirectUrl = $this->unparse_url($redirectUrlParts);
-                } else {
-                    $redirectUrl = (isset($parameters['redirect_path'])) ? $parameters['redirect_path'] : '/';
-                }
-                return $this->redirect($redirectUrl);
-            }
-        }
+                )
+            ));
+	    }
     }
 
     /**
@@ -285,84 +245,50 @@ class SendFeedbackController extends Controller
      *
      * @return array
      */
-    private function processAttachment($attachment, $user, $values, $to)
+    private function processAttachment($file, $user, $values)
     {
         $imageService = $this->container->get('image');
         $attachmentService = $this->container->get('attachment');
         $em = $this->container->get('em');
-        $translator = $this->container->get('translator');
-        $feedbackRepository = $em->getRepository('Newscoop\Entity\Feedback');
+        $pluginSettings = $em->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')->findOneById(1);
+        $source = array('user' => $user, 'source' => 'feedback');
         $language = $values['language'];
         if (!($language instanceof \Newscoop\Entity\Language)) {
             $language = $em->getRepository('Newscoop\Entity\Language')->findOneById($language);
         }
 
-        $settingsEntity = $em
-            ->getRepository('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings')
-            ->findOneById(1);
-        $storeInDb = $settingsEntity->getStoreInDatabase();
-        $allowNonUsers = $settingsEntity->getAllowAnonymous();
-
-        $feedback = new Feedback();
-        $source = array(
-            'user' => $user,
-            'source' => 'feedback'
-        );
-
-        if (strstr($attachment->getClientMimeType(), 'image')) {
-
-            $image = $imageService->upload($attachment, $source);
+        if (strstr($file->getClientMimeType(), 'image')) {
+            $image = $imageService->upload($file, $source);
             $image->setStatus(LocalImage::STATUS_UNAPPROVED);
             $em->persist($image);
             $em->flush();
 
             $values['attachment_type'] = 'image';
             $values['attachment_id'] = $image->getId();
+            $values['attachment'] = $image;
 
-            if ($allowNonUsers == 0 && $storeInDb == 1) {
-                $feedbackRepository->save($feedback, $values);
-                $feedbackRepository->flush();
-            }
-
-            $this->sendMail($values, $user, $to, $image);
-
-            $this->get('dispatcher')
-                ->dispatch('image.delivered', new GenericEvent($this, array(
-                    'user' => $user,
-                    'image_id' => $image->getId()
-                )));
-
-            return array(
-                'status' => true,
-                'message' => $translator->trans('plugin.feedback.msg.successimage')
-            );
-        }
-
-        $file = $attachmentService->upload($attachment, '', $language, $source);
-        $file->setStatus(Attachment::STATUS_UNAPPROVED);
-        $em->persist($file);
-        $em->flush();
-
-        $values['attachment_type'] = 'document';
-        $values['attachment_id'] = $file->getId();
-
-        if ($allowNonUsers == 0 && $storeInDb == 1) {
-            $feedbackRepository->save($feedback, $values);
-            $feedbackRepository->flush();
-        }
-
-        $this->sendMail($values, $user, $to, $file);
-
-        $this->get('dispatcher')
-            ->dispatch('document.delivered', new GenericEvent($this, array(
+            $this->get('dispatcher')->dispatch('image.delivered', new GenericEvent($this, array(
                 'user' => $user,
-                'document_id' => $file->getId()
+                'image_id' => $image->getId()
             )));
+        } else {
+            $attachment = $attachmentService->upload($file, '', $language, $source);
+            $attachment->setStatus(Attachment::STATUS_UNAPPROVED);
+            $em->persist($attachment);
+            $em->flush();
 
-        return array(
-            'status' => true,
-            'message' => $translator->trans('plugin.feedback.msg.successfile')
-        );
+            $values['attachment_type'] = 'document';
+            $values['attachment_id'] = $attachment->getId();
+            $values['attachment'] = $attachment;
+
+            $this->get('dispatcher')->dispatch('document.delivered', new GenericEvent($this, array(
+                'user' => $user,
+                'document_id' => $attachment->getId()
+            )));
+        }
+
+
+        return $values;
     }
 
     /**
@@ -385,5 +311,36 @@ class SendFeedbackController extends Controller
         $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
 
         return "$scheme$user$pass$host$port$path$query$fragment";
+    }
+
+    /**
+     * Create reponse object from passed dataType
+     *
+     * @param  Request $request
+     * @param  array $response
+     *
+     * @return Response
+     */
+    private function createResponse(Request $request, $response)
+    {
+        $parameters = $request->request->all();
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($response);
+        } else {
+            if (!$response['response']['status']) {
+                $redirectUrl = (isset($parameters['feedbackUrl'])) ? $parameters['feedbackUrl'] : '/';
+                $redirectUrlParts = parse_url($redirectUrl);
+
+                $redirectQuery = array();
+                parse_str($redirectUrlParts['query'], $redirectQuery);
+                $redirectQuery['feedback_error'] = $response['response']['message'];
+                $redirectUrlParts['query'] = http_build_query($redirectQuery);
+
+                $redirectUrl = $this->unparse_url($redirectUrlParts);
+            } else {
+                $redirectUrl = (isset($parameters['redirect_path'])) ? $parameters['redirect_path'] : '/';
+            }
+            return $this->redirect($redirectUrl);
+        }
     }
 }
