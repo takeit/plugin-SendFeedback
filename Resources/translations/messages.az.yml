@@ -24,7 +24,6 @@ plugin:
             saved: 'Uğurla saxlandı'
             error: 'Dəyişikliklərin saxlanması zamanı xəta baş verdi.'
             errorinvalidemail: null
-            errorstoreindb: null
             success: 'Sənin mesajın göndərildi.'
             errorlogged: 'Rəy göndərmək üçün sayta giriş etməlisən.'
             errorfile: 'Səhv fayl həcmi!'

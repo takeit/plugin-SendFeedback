@@ -24,7 +24,6 @@ plugin:
             saved: 'Erfolgreich gespeichert'
             error: 'Fehler beim Speichern der Änderungen.'
             errorinvalidemail: null
-            errorstoreindb: null
             success: 'Ihre Nachricht wurde gesendet.'
             errorlogged: 'Sie müssen angemeldet sein, um Feedback zu senden.'
             errorfile: 'Falsche Dateierweiterung!'

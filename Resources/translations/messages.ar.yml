@@ -24,7 +24,6 @@ plugin:
             saved: 'تم الحفظ بنجاح'
             error: 'حدث خطأ في حفظ التغييرات.'
             errorinvalidemail: null
-            errorstoreindb: null
             success: 'تم إرسال رسالتك.'
             errorlogged: 'يجب أن يتم التسجيل حتى تتمكن من إرسال بيانات التقييم.'
             errorfile: 'تمديد الملف غير صالح!'

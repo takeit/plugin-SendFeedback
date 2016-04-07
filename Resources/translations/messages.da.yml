@@ -24,7 +24,6 @@ plugin:
             saved: Gemt
             error: 'Ændringerne kunne ikke gemmes.'
             errorinvalidemail: null
-            errorstoreindb: null
             success: 'Din besked blev sendt.'
             errorlogged: 'Du skal være logget ind for at sende feedback.'
             errorfile: 'Forkert fil endelse!'

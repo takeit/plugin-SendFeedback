@@ -24,7 +24,6 @@ plugin:
             saved: 'Úspěšně uloženo'
             error: 'Během ukládání změn se vyskytla chyba.'
             errorinvalidemail: null
-            errorstoreindb: null
             success: 'Vaše zpráva byla poslána.'
             errorlogged: null
             errorfile: 'Špatná přípona souboru!'

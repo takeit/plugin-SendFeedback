@@ -24,7 +24,6 @@ plugin:
             saved: 'A mentés sikerült.'
             error: 'Hiba történt a változtatások mentésekor.'
             errorinvalidemail: null
-            errorstoreindb: null
             success: 'Az üzenet elküldése megtörtént.'
             errorlogged: 'Visszajelzés küldéséhez be kell jelentkezned.'
             errorfile: 'Rossz fájlkiterjesztés!'

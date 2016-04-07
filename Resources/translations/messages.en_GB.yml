@@ -13,18 +13,17 @@ plugin:
             toemail: 'Email address(es)'
             toemailsmall: 'Email addresses to which feedback messages will be sent. Separate multiple address with commas.'
             storeindatabase: 'Store in the database?'
-            storeindatabasesmall: 'To store feedback messages in the database, the option ''Allow everybody?'' should be disabled. Only feedback messages from registered users can be stored. Also make you sure you add the hidden fields for publication, section and issue.'
+            storeindatabasesmall: null
             allowattachments: 'Allow attachments?'
             allowattachmentssmall: 'Allow users to send attachments. They will be uploaded in the Media Archive with the status ''unapproved''.'
             allownonusers: 'Allow everybody?'
-            allownonuserssmall: 'When ''yes'' is selected, all visitors can send feedback messages. If ''no'' is selected, only registered and logged in users can.'
+            allownonuserssmall: null
             yesoption: Yes
             nooption: No
         msg:
             saved: 'Successfully saved'
             error: 'Error occurred while saving changes.'
             errorinvalidemail: 'An invalid email address ($1) has been entered.'
-            errorstoreindb: 'Cannot store messages in database when non-users can submit feedback. Please disable the option ''Allow everybody''.'
             success: 'Your message has been sent.'
             errorlogged: 'You have to be logged in to send feedback messages.'
             errorfile: 'Wrong file extension!'

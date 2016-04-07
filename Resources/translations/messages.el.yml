@@ -24,7 +24,6 @@ plugin:
             saved: null
             error: null
             errorinvalidemail: null
-            errorstoreindb: null
             success: null
             errorlogged: null
             errorfile: null
