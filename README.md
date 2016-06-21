@@ -5,13 +5,50 @@ storing in database and uploading attachments.
 
 This plugin is compatible with Newscoop 4.3 and higher.
 
-### Features
+Features
+--------
 
 - Send feedback messages (supported fields: first name, last name, email, subject and message)
 - Supports posting via AJAX and normal post with custom redirect page
 - Attachments handling (only images and pdf documents), attach to mail or upload into Newscoop Media Library
 - Let site visitors decide who to send email to (with spam protection)
 - Store feedback in database and view in Newscoop backend (see detailed instructions)
+
+Installation
+-------------
+Installation is a quick process:
+
+
+1. How to install this plugin?
+2. That's all!
+
+### Step 1: How to install this plugin?
+Run the command:
+``` bash
+$ php application/console plugins:install "newscoop/send-feedback-plugin"
+$ php application/console assets:install public/
+```
+Plugin will be installed to your project's `newscoop/plugins/Newscoop` directory.
+
+### Step 2: That's all!
+Go to Newscoop Admin panel and then open `Plugins` tab. The Plugin will show up there. You can now use the plugin.
+
+
+**Note:**
+
+To update this plugin run the command:
+``` bash
+$ php application/console plugins:update "newscoop/send-feedback-plugin"
+$ php application/console assets:install public/
+```
+
+To remove this plugin run the command:
+``` bash
+$ php application/console plugins:remove "newscoop/send-feedback-plugin"
+```
+
+Documentation
+-------------
 
 ### Extended plugin documentation
 
@@ -59,22 +96,14 @@ With the help of the tag {{ get_feedback_settings }} it's possible to read the p
 </form>
 ```
 
-### Commands
-#### Install the plugin
+License
+-------
 
-``` bash
-$ php application/console plugins:install "newscoop/send-feedback-plugin" --env=prod
-$ php application/console assets:install public/
-```
+This bundle is under the GNU General Public License v3. See the complete license in the bundle:
 
-#### Update the plugin
+    LICENSE
 
-``` bash
-$ php application/console plugins:update "newscoop/send-feedback-plugin" --env=prod
-```
+About
+-------
+This Bundle is a [Sourcefabric z.ú.](https://github.com/sourcefabric) initiative.
 
-#### Remove the plugin
-
-``` bash
-$ php application/console plugins:remove "newscoop/send-feedback-plugin" --env=prod
-```
