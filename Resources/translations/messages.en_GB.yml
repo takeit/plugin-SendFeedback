@@ -13,11 +13,11 @@ plugin:
             toemail: 'Email address(es)'
             toemailsmall: 'Email addresses to which feedback messages will be sent. Separate multiple address with commas.'
             storeindatabase: 'Store in the database?'
-            storeindatabasesmall: null
+            storeindatabasesmall: 'Make you sure you add the hidden fields for publication, section and issue.'
             allowattachments: 'Allow attachments?'
             allowattachmentssmall: 'Allow users to send attachments. They will be uploaded in the Media Archive with the status ''unapproved''.'
             allownonusers: 'Allow everybody?'
-            allownonuserssmall: null
+            allownonuserssmall: 'When yes is selected all visitors can send feedback messages. If no is selected only registered and logged in users can.'
             yesoption: Yes
             nooption: No
         msg:
