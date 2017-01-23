@@ -90,6 +90,18 @@
                 </td>
             </tr>
 
+            <tr class="send-feedback-bg">
+                <td align="left" class="send-feedback-size send-feedback-border">
+                    {{ form_label(form.recaptchaEnabled) }} <br>
+                    <small>{{ 'plugin.feedback.label.recaptchasmall'|trans }}</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="send-feedback-border">
+                    {{ form_widget(form.recaptchaEnabled, {'attr' : {'class' : 'form-control'}}) }}
+                </td>
+            </tr>
+
             <tr>
                 <td colspan="2"><hr></td>
             </tr>

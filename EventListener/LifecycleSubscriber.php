@@ -1,11 +1,9 @@
 <?php
 /**
- * @package Newscoop\SendFeedbackBundle
  * @author Rafał Muszyński <rafal.muszynski@sourcefabric.org>
- * @copyright 2013 Sourcefabric o.p.s.
+ * @copyright 2013 Sourcefabric o.p.s
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
-
 namespace Newscoop\SendFeedbackBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,7 +13,7 @@ use Newscoop\SendFeedbackBundle\Entity\FeedbackSettings;
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
- * Event lifecycle management
+ * Event lifecycle management.
  */
 class LifecycleSubscriber implements EventSubscriberInterface
 {
@@ -23,7 +21,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
 
     private $em;
 
-    public function __construct(ContainerInterface $container) {
+    public function __construct(ContainerInterface $container)
+    {
         $this->container = $container;
         $this->em = $this->container->get('em');
     }
@@ -34,7 +33,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $tool->updateSchema($this->getClasses(), true);
 
         // Generate proxies for entities
-        $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
+        $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__.'/../../../../library/Proxy');
 
         $settingsEntity = new FeedbackSettings();
         $settingsEntity->setId(1);
@@ -42,6 +41,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $settingsEntity->setStoreInDatabase(false);
         $settingsEntity->setAllowAttachments(false);
         $settingsEntity->setAllowAnonymous(false);
+        $settingsEntity->setRecaptchaEnabled(false);
         $this->em->persist($settingsEntity);
         $this->em->flush();
 
@@ -54,7 +54,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
         $tool->updateSchema($this->getClasses(), true);
 
         // Generate proxies for entities
-        $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__ . '/../../../../library/Proxy');
+        $this->em->getProxyFactory()->generateProxyClasses($this->getClasses(), __DIR__.'/../../../../library/Proxy');
 
         $preferencesService = $this->container->get('system_preferences_service');
         $settingsEntity = $this
@@ -70,7 +70,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
             } else {
                 $settingsEntity->setTo($preferencesService->get('SendFeedbackEmail'));
                 $removeEmail = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                    'option' => 'SendFeedbackEmail'
+                    'option' => 'SendFeedbackEmail',
                 ));
                 $this->em->remove($removeEmail);
             }
@@ -79,7 +79,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
             } else {
                 $settingsEntity->setStoreInDatabase((($preferencesService->get('StoreFeedbackInDatabase') == 'N') ? false : true));
                 $removeDatabase = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                    'option' => 'StoreFeedbackInDatabase'
+                    'option' => 'StoreFeedbackInDatabase',
                 ));
                 $this->em->remove($removeDatabase);
             }
@@ -88,7 +88,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
             } else {
                 $settingsEntity->setAllowAttachments((($preferencesService->get('AllowFeedbackAttachments') == 'N') ? false : true));
                 $removeAttachments = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                    'option' => 'AllowFeedbackAttachments'
+                    'option' => 'AllowFeedbackAttachments',
                 ));
                 $this->em->remove($removeAttachments);
             }
@@ -97,7 +97,7 @@ class LifecycleSubscriber implements EventSubscriberInterface
             } else {
                 $settingsEntity->setAllowAnonymous((($preferencesService->get('AllowFeedbackFromNonUsers') == 'N') ? false : true));
                 $removeNonUserPref = $this->em->getRepository('Newscoop\NewscoopBundle\Entity\SystemPreferences')->findOneBy(array(
-                    'option' => 'AllowFeedbackFromNonUsers'
+                    'option' => 'AllowFeedbackFromNonUsers',
                 ));
                 $this->em->remove($removeNonUserPref);
             }
@@ -123,7 +123,8 @@ class LifecycleSubscriber implements EventSubscriberInterface
         );
     }
 
-    private function getClasses(){
+    private function getClasses()
+    {
         return array(
             $this->em->getClassMetadata('Newscoop\SendFeedbackBundle\Entity\FeedbackSettings'),
         );
