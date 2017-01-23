@@ -1,28 +1,25 @@
 <?php
 
 /**
- * @package Newscoop\SendFeedbackBundle
  * @author Rafał Muszyński <rafal.muszynski@sourcefabric.org>
- * @copyright 2013 Sourcefabric o.p.s.
+ * @copyright 2013 Sourcefabric o.p.s
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
-
 namespace Newscoop\SendFeedbackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Newscoop\SendFeedbackBundle\Form\Type\SettingsType;
 use Symfony\Component\Validator\Constraints\Email as EmailConstraint;
 
 class AdminController extends Controller
 {
     /**
-    * @Route("/admin/send-feedback")
-    * @Template()
-    */
+     * @Route("/admin/send-feedback")
+     * @Template()
+     */
     public function indexAction(Request $request)
     {
         $preferencesService = $this->container->get('system_preferences_service');
@@ -37,6 +34,7 @@ class AdminController extends Controller
             'storeInDatabase' => $settingsEntity->getStoreInDatabase(),
             'allowAttachments' => $settingsEntity->getAllowAttachments(),
             'allowNonUsers' => $settingsEntity->getAllowAnonymous(),
+            'recaptchaEnabled' => $settingsEntity->isRecaptchaEnabled(),
         ), array());
 
         if ($request->isMethod('POST')) {
@@ -77,6 +75,7 @@ class AdminController extends Controller
                     $settingsEntity->setStoreInDatabase($data['storeInDatabase']);
                     $settingsEntity->setAllowAttachments($data['allowAttachments']);
                     $settingsEntity->setAllowAnonymous($data['allowNonUsers']);
+                    $settingsEntity->setRecaptchaEnabled($data['recaptchaEnabled']);
                     $em->persist($settingsEntity);
                     $em->flush();
 
@@ -91,7 +90,7 @@ class AdminController extends Controller
         }
 
         return array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
         );
     }
 }

@@ -1,11 +1,9 @@
 <?php
 /**
- * @package Newscoop\SendFeedbackBundle
  * @author Rafał Muszyński <rafal.muszynski@sourcefabric.org>
- * @copyright 2013 Sourcefabric o.p.s.
+ * @copyright 2013 Sourcefabric o.p.s
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
-
 namespace Newscoop\SendFeedbackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,12 +18,16 @@ use Newscoop\Entity\Feedback;
 use Newscoop\EventDispatcher\Events\GenericEvent;
 use Newscoop\Entity\Attachment;
 use Newscoop\Image\LocalImage;
+use Buzz\Message\Form\FormRequest;
 
 /**
- * Send feedback controller
+ * Send feedback controller.
  */
 class SendFeedbackController extends Controller
 {
+    const RECAPTCHA_URL = 'https://www.google.com';
+    const RECAPTCHA_ENDPOINT = '/recaptcha/api/siteverify';
+
     /**
      * @Route("/plugin/send-feedback")
      * @Method("POST")
@@ -48,19 +50,31 @@ class SendFeedbackController extends Controller
         $form = $this->createForm(new SendFeedbackType(), array());
         $form->handleRequest($request);
         if ($form->isValid()) {
+            if ($pluginSettings->isRecaptchaEnabled()) {
+                $result = $this->validateRecaptcha($request->request->get('g-recaptcha-response'));
+                if (!$result) {
+                    return $this->createResponse($request, array(
+                        'response' => array(
+                            'status' => false,
+                            'message' => 'reCaptcha not valid.',
+                        ),
+                    ));
+                }
+            }
+
             $parameters = $request->request->all();
             $data = $form->getData();
             $userService = $this->container->get('user');
             try {
                 $user = $userService->getCurrentUser();
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 // return error if not allowed for annonymous and user not found
                 if ($allowNonUsers == 0) {
                     return $this->createResponse($request, array(
                         'response' => array(
                             'status' => false,
-                            'message' => $translator->trans('plugin.feedback.msg.errorlogged')
-                        )
+                            'message' => $translator->trans('plugin.feedback.msg.errorlogged'),
+                        ),
                     ));
                 }
 
@@ -72,14 +86,14 @@ class SendFeedbackController extends Controller
             if (!is_null($user) && isset($parameters['publication'])) {
                 $userIsBanned = $em->getRepository('Newscoop\Entity\Comment\Acceptance')
                     ->checkParamsBanned($user->getUsername(), $user->getEmail(), null, $parameters['publication']);
-            	if ($userIsBanned) {
+                if ($userIsBanned) {
                     return $this->createResponse($request, array(
                         'response' => array(
                             'status' => false,
-                            'message' => $translator->trans('plugin.feedback.msg.banned')
-                        )
+                            'message' => $translator->trans('plugin.feedback.msg.banned'),
+                        ),
                     ));
-            	}
+                }
             }
 
             // Check if the form provides custom recievers
@@ -100,8 +114,8 @@ class SendFeedbackController extends Controller
                         return $this->createResponse($request, array(
                             'response' => array(
                                 'status' => false,
-                                'message' => $translator->trans('plugin.feedback.msg.erroremail', array('$1' => $receiver))
-                            )
+                                'message' => $translator->trans('plugin.feedback.msg.erroremail', array('$1' => $receiver)),
+                            ),
                         ));
                     }
                 }
@@ -128,14 +142,14 @@ class SendFeedbackController extends Controller
                 'language' => isset($parameters['language']) ? $parameters['language'] : $locale,
                 'status' => 'pending',
                 'attachment_type' => 'none',
-                'attachment_id' => 0
+                'attachment_id' => 0,
             );
 
             $attachment = $form['attachment']->getData();
             $processedAttachment = null;
             if ($pluginSettings->getAllowAttachments() == 1 && $attachment) {
                 if ($attachment->getClientSize() <= $attachment->getMaxFilesize() && $attachment->getClientSize() != 0) {
-                    if (in_array($attachment->guessClientExtension(), array('png','jpg','jpeg','gif','pdf'))) {
+                    if (in_array($attachment->guessClientExtension(), array('png', 'jpg', 'jpeg', 'gif', 'pdf'))) {
                         $values = $this->processAttachment($attachment, $user, $values, $to);
                         $processedAttachment = $values['attachment'];
                         unset($values['attachment']);
@@ -143,16 +157,16 @@ class SendFeedbackController extends Controller
                         return $this->createResponse($request, array(
                             'response' => array(
                                 'status' => false,
-                                'message' => $translator->trans('plugin.feedback.msg.errorfile')
-                            )
+                                'message' => $translator->trans('plugin.feedback.msg.errorfile'),
+                            ),
                         ));
                     }
                 } else {
                     return $this->createResponse($request, array(
                         'response' => array(
                             'status' => false,
-                            'message' => $translator->trans('plugin.feedback.msg.errorsize', array('%size%' => $preferencesService->MaxUploadFileSize))
-                        )
+                            'message' => $translator->trans('plugin.feedback.msg.errorsize', array('%size%' => $preferencesService->MaxUploadFileSize)),
+                        ),
                     ));
                 }
             }
@@ -167,28 +181,26 @@ class SendFeedbackController extends Controller
 
             return $this->createResponse($request, array(
                 'response' => array(
-                    'status' => true
-                )
+                    'status' => true,
+                ),
             ));
         } else {
             return $this->createResponse($request, array(
                 'response' => array(
                     'status' => false,
-                    'message' => 'Invalid Form'
-                )
+                    'message' => 'Invalid Form',
+                ),
             ));
-	    }
+        }
     }
 
     /**
-     * Send e-mail message with feedback
+     * Send e-mail message with feedback.
      *
      * @param array                $values Values
      * @param Newscoop\Entity\User $user   User
      * @param string               $to     Email that messages will be sent
      * @param UploadedFile|null    $file   Uploaded file dir
-     *
-     * @return void
      */
     private function sendMail($values, $user, $to, $file = null)
     {
@@ -203,8 +215,8 @@ class SendFeedbackController extends Controller
         if ($user instanceof \Newscoop\Entity\User) {
             $zendRouter = $this->container->get('zend_router');
             $request = $this->container->get('request');
-            $link = $request->getScheme() . '://' . $request->getHttpHost();
-            $userProfile = $link . $zendRouter->assemble(array('controller' => 'user', 'action' => 'profile', 'module' => 'default')) ."/". urlencode($user->getUsername());
+            $link = $request->getScheme().'://'.$request->getHttpHost();
+            $userProfile = $link.$zendRouter->assemble(array('controller' => 'user', 'action' => 'profile', 'module' => 'default')).'/'.urlencode($user->getUsername());
             $fromAddress = $user->getEmail();
         }
 
@@ -217,7 +229,7 @@ class SendFeedbackController extends Controller
                 'email' => $values['email'],
                 'page' => $values['url'],
                 'subject' => $values['subject'],
-                'message' => $values['message']
+                'message' => $values['message'],
             )
         );
 
@@ -237,7 +249,7 @@ class SendFeedbackController extends Controller
     }
 
     /**
-     * Process attachment
+     * Process attachment.
      *
      * @param UploadedFile         $attachment Uploaded file
      * @param Newscoop\Entity\User $user       User
@@ -269,7 +281,7 @@ class SendFeedbackController extends Controller
 
             $this->get('dispatcher')->dispatch('image.delivered', new GenericEvent($this, array(
                 'user' => $user,
-                'image_id' => $image->getId()
+                'image_id' => $image->getId(),
             )));
         } else {
             $attachment = $attachmentService->upload($file, '', $language, $source);
@@ -283,41 +295,40 @@ class SendFeedbackController extends Controller
 
             $this->get('dispatcher')->dispatch('document.delivered', new GenericEvent($this, array(
                 'user' => $user,
-                'document_id' => $attachment->getId()
+                'document_id' => $attachment->getId(),
             )));
         }
-
 
         return $values;
     }
 
     /**
-     * Unparses a url which is parse with parse_url()
+     * Unparses a url which is parse with parse_url().
      *
-     * @param  array $parsed_url
+     * @param array $parsed_url
      *
      * @return string
      */
     private function unparse_url(array $parsed_url)
     {
-        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
-        $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-        $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
-        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
-        $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
-        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+        $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
+        $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+        $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
+        $user = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+        $pass = isset($parsed_url['pass']) ? ':'.$parsed_url['pass'] : '';
+        $pass = ($user || $pass) ? "$pass@" : '';
+        $path = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+        $query = isset($parsed_url['query']) ? '?'.$parsed_url['query'] : '';
+        $fragment = isset($parsed_url['fragment']) ? '#'.$parsed_url['fragment'] : '';
 
         return "$scheme$user$pass$host$port$path$query$fragment";
     }
 
     /**
-     * Create reponse object from passed dataType
+     * Create reponse object from passed dataType.
      *
-     * @param  Request $request
-     * @param  array $response
+     * @param Request $request
+     * @param array   $response
      *
      * @return Response
      */
@@ -340,7 +351,37 @@ class SendFeedbackController extends Controller
             } else {
                 $redirectUrl = (isset($parameters['redirect_path'])) ? $parameters['redirect_path'] : '/';
             }
+
             return $this->redirect($redirectUrl);
+        }
+    }
+
+    private function validateRecaptcha($gResponse)
+    {
+        $preferencesService = $this->container->get('system_preferences_service');
+
+        $req = new FormRequest(FormRequest::METHOD_POST, self::RECAPTCHA_ENDPOINT, self::RECAPTCHA_URL);
+        $req->setFields([
+            'secret' => $preferencesService->RecaptchaPrivateKey,
+            'response' => $gResponse,
+        ]);
+
+        $response = new \Buzz\Message\Response();
+
+        $client = new \Buzz\Client\Curl();
+        $client->setTimeout(3600);
+
+        try {
+            $client->send($req, $response);
+            $result = json_decode($response->getContent(), true);
+
+            if (!isset($result['success']) || (isset($result['success']) && !$result['success'])) {
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }
