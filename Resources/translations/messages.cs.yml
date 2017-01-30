@@ -20,8 +20,8 @@ plugin:
             allownonuserssmall: null
             yesoption: null
             nooption: null
-            recaptcha: 'Is reCaptcha enabled?'
-            recaptchasmall: 'Prevents from sending spam'
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: 'Úspěšně uloženo'
             error: 'Během ukládání změn se vyskytla chyba.'

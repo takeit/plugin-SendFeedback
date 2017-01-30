@@ -20,8 +20,8 @@ plugin:
             allownonuserssmall: 'When yes is selected all visitors can send feedback messages. If no is selected only registered and logged in users can.'
             yesoption: Yes
             nooption: No
-            recaptcha: 'Is reCaptcha enabled?'
-            recaptchasmall: 'Prevents from sending spam'
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: 'Successfully saved'
             error: 'Error occurred while saving changes.'

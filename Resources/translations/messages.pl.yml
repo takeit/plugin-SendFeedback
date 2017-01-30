@@ -20,8 +20,8 @@ plugin:
             allownonuserssmall: null
             yesoption: Tak
             nooption: Nie
-            recaptcha: 'Is reCaptcha enabled?'
-            recaptchasmall: 'Prevents from sending spam'
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: 'Zapisano pomyślnie'
             error: null

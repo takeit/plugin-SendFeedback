@@ -20,8 +20,8 @@ plugin:
             allownonuserssmall: null
             yesoption: Да
             nooption: Нет
-            recaptcha: 'Is reCaptcha enabled?'
-            recaptchasmall: 'Prevents from sending spam'
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: null
             error: null
