@@ -20,6 +20,8 @@ plugin:
             allownonuserssmall: null
             yesoption: null
             nooption: null
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: 'A mentés sikerült.'
             error: 'Hiba történt a változtatások mentésekor.'

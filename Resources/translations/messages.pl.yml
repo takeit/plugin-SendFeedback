@@ -20,6 +20,8 @@ plugin:
             allownonuserssmall: null
             yesoption: Tak
             nooption: Nie
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: 'Zapisano pomyślnie'
             error: null

@@ -20,6 +20,8 @@ plugin:
             allownonuserssmall: null
             yesoption: Ja
             nooption: Nej
+            recaptcha: null
+            recaptchasmall: null
         msg:
             saved: Gemt
             error: 'Ændringerne kunne ikke gemmes.'
